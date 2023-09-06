@@ -1,4 +1,4 @@
-export interface StoragedVideo extends VideoResponse {
+export interface StoragedVideo extends VideoList {
   storageId: string;
   playUrls: string[];
 }

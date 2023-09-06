@@ -1,4 +1,4 @@
-import type { VideoList } from '@/types/video';
+import type { StoragedVideo, VideoList } from '@/types/video';
 import { genStorageId } from '@/lib/utils';
 import Image from 'next/image';
 import localforage from 'localforage';
@@ -10,26 +10,40 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export function Video({ video }: { video: VideoList }) {
-  console.log(video);
+export function Video({
+  video,
+  isStoraged,
+}: {
+  video: VideoList | StoragedVideo;
+  isStoraged?: boolean;
+}) {
   const urls = video.vod_play_url.split('$$$')[1].split('#');
   const playUrls = urls.map((url) => url.split('$')[1]);
   const storageId = genStorageId();
   const router = useRouter();
-  const playVideo = () => {
-    const storageInfo = {
-      playUrls,
-      ...video,
+  let playVideo: () => void;
+  if (isStoraged) {
+    playVideo = () => {
+      router.push(`/channel/${(video as StoragedVideo).storageId}`);
     };
-    localforage
-      .setItem(storageId, storageInfo)
-      .then(function (value) {
-        router.push(`/channel/${storageId}`);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  };
+  } else {
+    playVideo = () => {
+      const storageInfo = {
+        playUrls,
+        storageId,
+        ...video,
+      };
+      localforage
+        .setItem(storageId, storageInfo)
+        .then(function (value) {
+          router.push(`/channel/${storageId}`);
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    };
+  }
+
   return (
     <Card
       className='hover:shadow-2xl cursor-pointer m-auto'
@@ -39,7 +53,7 @@ export function Video({ video }: { video: VideoList }) {
         <Image
           src={video.vod_pic}
           alt='vod_cover'
-          className='rounded-lg object-cover w-auto h-auto transition-opacity opacity-0 duration-1000'
+          className='rounded-lg object-cover w-[200px] h-[300px] transition-opacity opacity-0 duration-1000'
           width='200'
           height='300'
           onLoadingComplete={(img) => img.classList.remove('opacity-0')}

@@ -1,17 +1,44 @@
 'use client';
+import type { VideoList, StoragedVideo } from '@/types/video';
 import { Settings } from '@/components/settings';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { GitHubLogoIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-import type { VideoList } from '@/types/video';
+import { useEffect, useState } from 'react';
 import { Video } from '@/components/video';
 import Loading from '@/components/loading';
+import localforage from 'localforage';
+import {
+  GitHubLogoIcon,
+  MagnifyingGlassIcon,
+  TimerIcon,
+  Pencil2Icon,
+} from '@radix-ui/react-icons';
 
 export default function Home() {
   const [vname, setVname] = useState('');
   const [videoList, setVideoList] = useState<VideoList[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const [historyList, setHistoryList] = useState<StoragedVideo[]>();
+  const [isEdit, setIsEdit] = useState(false);
+  useEffect(() => {
+    localforage
+      .iterate<StoragedVideo, void>(function (value, key, iterationNumber) {
+        console.log({ key: value });
+        setHistoryList((prev) => {
+          if (prev) {
+            return [...prev, value];
+          } else {
+            return [value];
+          }
+        });
+      })
+      .then(function () {
+        console.log('Iteration has completed');
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }, []);
   const fetchVideos = () => {
     setIsLoading(true);
     if (vname) {
@@ -61,6 +88,35 @@ export default function Home() {
             <div className='flex flex-wrap gap-2'>
               {videoList.map((video) => (
                 <Video key={video.vod_id} video={video} />
+              ))}
+            </div>
+          </div>
+        ) : historyList ? (
+          <div className='flex flex-col p-5 gap-5'>
+            <h1 className='inline-flex items-center gap-1 text-2xl font-semibold justify-between'>
+              <span className='inline-flex items-center gap-2'>
+                <TimerIcon className='w-8 h-8' />
+                Continue Watching
+              </span>
+              {isEdit ? (
+                <span
+                  className='px-3 py-2 rounded-full bg-neutral-100 cursor-pointer'
+                  onClick={() => setIsEdit(false)}
+                >
+                  Stop editing
+                </span>
+              ) : (
+                <span
+                  className='p-2 rounded-full bg-neutral-100 cursor-pointer'
+                  onClick={() => setIsEdit(true)}
+                >
+                  <Pencil2Icon className='w-8 h-8' />
+                </span>
+              )}
+            </h1>
+            <div className='flex flex-wrap gap-2'>
+              {historyList?.map((video) => (
+                <Video key={video.storageId} video={video} isStoraged />
               ))}
             </div>
           </div>
