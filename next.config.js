@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pic.lzzypic.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pic.wujinpp.com',
+      },
     ],
   },
 };

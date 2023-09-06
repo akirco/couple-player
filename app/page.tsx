@@ -6,11 +6,14 @@ import { GitHubLogoIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import type { VideoList } from '@/types/video';
 import { Video } from '@/components/video';
+import Loading from '@/components/loading';
 
 export default function Home() {
   const [vname, setVname] = useState('');
   const [videoList, setVideoList] = useState<VideoList[]>();
+  const [isLoading, setIsLoading] = useState(false);
   const fetchVideos = () => {
+    setIsLoading(true);
     if (vname) {
       fetch('/api/video', {
         method: 'POST',
@@ -19,6 +22,7 @@ export default function Home() {
         }),
       }).then((response) => {
         response.json().then((res) => {
+          setIsLoading(false);
           setVideoList(res.list);
         });
       });
@@ -33,7 +37,9 @@ export default function Home() {
         </Button>
       </div>
       <div className='m-auto flex flex-col gap-2'>
-        <h1 className='text-4xl font-extrabold'>What do you want to watch?</h1>
+        <h1 className='text-4xl font-extrabold text-center pb-5'>
+          What do you want to watch?
+        </h1>
         <div className='flex w-full max-w-sm items-center space-x-2 m-auto'>
           <Input
             placeholder='What do you want to watch?'
@@ -42,7 +48,11 @@ export default function Home() {
           />
           <Button onClick={fetchVideos}>Search</Button>
         </div>
-        {videoList ? (
+        {isLoading ? (
+          <div className='flex'>
+            <Loading />
+          </div>
+        ) : videoList ? (
           <div className='flex flex-col p-5 gap-5'>
             <h1 className='inline-flex items-center gap-1 text-2xl font-semibold'>
               <MagnifyingGlassIcon className='w-8 h-8' />

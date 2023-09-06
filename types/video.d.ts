@@ -1,3 +1,8 @@
+export interface StoragedVideo extends VideoResponse {
+  storageId: string;
+  playUrls: string[];
+}
+
 export interface VideoResponse {
   code: number;
   msg: string;
