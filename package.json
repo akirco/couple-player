@@ -24,6 +24,7 @@
     "localforage": "^1.10.0",
     "nanoid": "^4.0.2",
     "next": "13.4.19",
+    "peerjs": "^1.5.0",
     "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",

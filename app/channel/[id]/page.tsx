@@ -33,13 +33,15 @@ export default function Channel({ params }: { params: { id: string } }) {
   }, [params.id]);
   return (
     <div className='flex flex-col xl:p-6 p-0'>
-      <main className='flex gap-5 w-full h-full xl:flex-row flex-col pb-16'>
+      <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
         <Player url={currentUrl} title={currentPlay?.vod_name} />
-        <Card className='flex flex-col'>
-          <CardContent className='py-5 flex flex-col gap-5'>
-            <h1 className='text-3xl font-medium px-36'>Chatbox</h1>
-            <div className='flex w-full max-w-sm items-center space-x-2 m-auto'>
-              <Input placeholder='What do you want to watch?' type='search' />
+        <Card className='flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none'>
+          <CardContent className='py-5 flex flex-col gap-5 justify-between h-full items-center'>
+            <h1 className='xl:text-2xl text-xl font-medium px-36 text-center'>
+              Chatbox
+            </h1>
+            <div className='flex w-full max-w-sm items-center space-x-2'>
+              <Input placeholder='Send a message?' type='search' />
               <Button size={'icon'}>
                 <PaperPlaneIcon />
               </Button>
@@ -47,9 +49,9 @@ export default function Channel({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </main>
-      <Card>
+      <Card className='px-2 w-full'>
         <CardContent className='py-5 flex flex-col gap-5'>
-          <CardTitle>Video:</CardTitle>
+          <CardTitle>Collections:</CardTitle>
           <div className='flex flex-wrap gap-5'>
             {currentPlay?.playUrls && currentPlay?.playUrls?.length > 0
               ? currentPlay?.playUrls.map((url, index) => (
@@ -66,12 +68,16 @@ export default function Channel({ params }: { params: { id: string } }) {
           </div>
           <hr className='border-none w-full h-[2px] bg-neutral-100' />
           <CardTitle>{currentPlay?.vod_name}</CardTitle>
-          <CardDescription>{currentPlay?.vod_director}</CardDescription>
+          <CardTitle>Type:</CardTitle>
           <CardDescription>
             {currentPlay?.type_name} {currentPlay?.vod_class}
           </CardDescription>
+          <CardTitle>Director:</CardTitle>
+          <CardDescription>{currentPlay?.vod_director}</CardDescription>
+          <CardTitle>Actor:</CardTitle>
           <CardDescription>{currentPlay?.vod_actor}</CardDescription>
-          <CardDescription>{currentPlay?.vod_blurb}</CardDescription>
+          <CardTitle>Intro:</CardTitle>
+          <CardDescription>{currentPlay?.vod_blurb}...</CardDescription>
         </CardContent>
       </Card>
     </div>

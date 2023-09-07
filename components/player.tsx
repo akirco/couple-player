@@ -23,9 +23,12 @@ const Player: FC<PlayerProps> = ({ url, title }) => {
       height: '100%',
       fluid: true,
       autoplay: true,
+      rotateFullscreen: true,
+      videoFillMode: 'contain',
     });
     return () => xgplayer.destroy();
   }, [url]);
+
   return (
     <>
       <div className='hover:bg-opacity-40 flex absolute p-4 flex-row opacity-0 hover:opacity-100 z-40 items-center gap-8 bg-black bg-opacity-0'>
