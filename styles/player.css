@@ -1,3 +1,18 @@
-#xgplayer {
-  @apply xl:!pt-[40%];
+.vjs-control-bar {
+  @apply !bg-black/50 !h-[4rem] !text-xl font-medium;
+}
+.vjs-control-text {
+  @apply !border-none;
+}
+.video-js .vjs-big-play-button {
+  @apply !rounded-full !h-[3rem] !bg-black/50 !border-none;
+}
+.vjs-button > .vjs-icon-placeholder:before {
+  @apply !relative;
+}
+.video-js .vjs-time-control {
+  @apply !flex !items-center;
+}
+.vjs-playback-rate .vjs-playback-rate-value {
+  @apply !leading-[4rem];
 }

@@ -23,7 +23,7 @@ export default function Home() {
   useEffect(() => {
     localforage
       .iterate<StoragedVideo, void>(function (value, key, iterationNumber) {
-        console.log({ key: value });
+        // console.log({ key: value });
         setHistoryList((prev) => {
           if (prev) {
             return [...prev, value];

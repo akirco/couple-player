@@ -9,3 +9,10 @@ export function cn(...inputs: ClassValue[]) {
 export function genStorageId() {
   return nanoid(20);
 }
+
+export async function checkApiAvailability(apiUrl: string) {
+  const response = await fetch(apiUrl);
+  if (response.ok) {
+  } else {
+  }
+}

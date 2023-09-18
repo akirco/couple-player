@@ -1,48 +1,52 @@
-'use client';
-import { useEffect, FC } from 'react';
-import XGPlayer from 'xgplayer';
-import 'xgplayer/dist/index.min.css';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import HlsPlayer from 'xgplayer-hls';
+import { useRef, useEffect, FC } from 'react';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import '@/styles/player.css';
-import { useRouter } from 'next/navigation';
+import type VPlayer from 'video.js/dist/types/player';
 
-interface PlayerProps {
-  url?: string;
-  title?: string;
+interface VideoJSProps {
+  options: any;
+  onReady: (player: VPlayer) => void;
 }
 
-const Player: FC<PlayerProps> = ({ url, title }) => {
-  const router = useRouter();
+const Player: FC<VideoJSProps> = ({ options, onReady }) => {
+  const videoRef = useRef<HTMLDivElement | null>(null);
+  const playerRef = useRef<VPlayer | null>(null);
+
   useEffect(() => {
-    const xgplayer = new XGPlayer({
-      id: 'xgplayer',
-      url,
-      plugins: [HlsPlayer],
-      width: '100%',
-      height: '100%',
-      fluid: true,
-      autoplay: true,
-      rotateFullscreen: true,
-      videoFillMode: 'contain',
-    });
-    return () => xgplayer.destroy();
-  }, [url]);
+    if (!playerRef.current) {
+      const videoElement = document.createElement('video');
+      videoElement.classList.add('vjs-big-play-centered');
+      videoElement.classList.add('video-js');
+      if (videoRef.current) {
+        videoRef.current.appendChild(videoElement);
+      }
+      const player = (playerRef.current = videojs(videoElement, options, () => {
+        onReady(player);
+      }));
+    } else {
+      const player = playerRef.current;
+      if (player) {
+        player.autoplay(options.autoplay);
+        player.src(options.sources);
+      }
+    }
+  }, [options, videoRef, onReady]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    return () => {
+      if (player && !player.isDisposed()) {
+        player.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, []);
 
   return (
-    <>
-      <div className='hover:bg-opacity-40 flex absolute p-4 flex-row opacity-0 hover:opacity-100 z-40 items-center gap-8 bg-black bg-opacity-0'>
-        <ArrowLeftIcon
-          onClick={() => router.push('/')}
-          className='text-white cursor-pointer w-8 h-8'
-        />
-        <p className='text-white text-1xl md:text-3xl font-bold'>
-          <span className='font-light'>watching : </span>
-          {title}
-        </p>
-      </div>
-      <div id='xgplayer'></div>
-    </>
+    <div data-vjs-player className='w-full'>
+      <div ref={videoRef}></div>
+    </div>
   );
 };
 

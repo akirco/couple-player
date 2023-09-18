@@ -17,8 +17,10 @@ export function Video({
   video: VideoList | StoragedVideo;
   isStoraged?: boolean;
 }) {
-  const urls = video.vod_play_url.split('$$$')[1].split('#');
-  const playUrls = urls.map((url) => url.split('$')[1]);
+  const regex = /https:\/\/[^#]+/g;
+  const playUrls = video.vod_play_url.match(regex);
+  // console.log(playUrls);
+
   const storageId = genStorageId();
   const router = useRouter();
   let playVideo: () => void;
@@ -56,12 +58,13 @@ export function Video({
           className='rounded-lg object-cover w-[200px] h-[300px] transition-opacity opacity-0 duration-1000'
           width='200'
           height='300'
+          priority
           onLoadingComplete={(img) => img.classList.remove('opacity-0')}
         />
         <CardTitle className='text-center'>{video.vod_name}</CardTitle>
         <div className='flex justify-between w-full'>
           <CardDescription>{video.vod_lang}</CardDescription>
-          <CardDescription>{playUrls.length}集</CardDescription>
+          <CardDescription>{playUrls?.length}集</CardDescription>
         </div>
       </CardContent>
     </Card>
