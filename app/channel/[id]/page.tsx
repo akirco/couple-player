@@ -58,7 +58,6 @@ export default function Channel({ params }: { params: { id: string } }) {
         .then((res) => {
           if (res) {
             setCurrentPlay(res);
-            console.log('zhixingle!!!');
             playerRef.current?.src([
               {
                 type: 'application/x-mpegURL',

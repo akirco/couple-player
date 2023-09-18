@@ -1,5 +1,5 @@
 .vjs-control-bar {
-  @apply !bg-black/50 !h-[4rem] !text-xl font-medium;
+  @apply !bg-black/50 !h-[4rem] sm:!text-xl font-medium;
 }
 .vjs-control-text {
   @apply !border-none;
