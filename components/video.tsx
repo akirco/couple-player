@@ -19,11 +19,6 @@ export function Video({
 }) {
   const regex = /https:\/\/[^#]+/g;
   const playUrls = video.vod_play_url.match(regex);
-<<<<<<< HEAD
-  // console.log(playUrls);
-
-=======
->>>>>>> e70f761 (rebase)
   const storageId = genStorageId();
   const router = useRouter();
   let playVideo: () => void;
