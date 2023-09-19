@@ -22,7 +22,7 @@ export function Settings() {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when youre done.
           </DialogDescription>
@@ -32,13 +32,13 @@ export function Settings() {
             <Label htmlFor='name' className='text-right'>
               Name
             </Label>
-            <Input id='name' value='Pedro Duarte' className='col-span-3' />
+            <Input id='name' value='' className='col-span-3' />
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='username' className='text-right'>
               Username
             </Label>
-            <Input id='username' value='@peduarte' className='col-span-3' />
+            <Input id='username' value='' className='col-span-3' />
           </div>
         </div>
         <DialogFooter>

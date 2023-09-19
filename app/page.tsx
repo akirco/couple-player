@@ -13,6 +13,7 @@ import {
   TimerIcon,
   Pencil2Icon,
 } from '@radix-ui/react-icons';
+import Link from 'next/link';
 
 export default function Home() {
   const [vname, setVname] = useState('');
@@ -59,9 +60,11 @@ export default function Home() {
     <main className='flex min-h-screen flex-col p-6'>
       <div className='flex justify-end items-center gap-5'>
         <Settings />
-        <Button variant={'ghost'} size={'icon'}>
-          <GitHubLogoIcon className='w-4 h-4' />
-        </Button>
+        <Link href={'https://github.com/akirco/couple-player'} target='_blank'>
+          <Button variant={'ghost'} size={'icon'}>
+            <GitHubLogoIcon className='w-4 h-4' />
+          </Button>
+        </Link>
       </div>
       <div className='m-auto flex flex-col gap-2'>
         <h1 className='text-4xl font-extrabold text-center pb-5'>

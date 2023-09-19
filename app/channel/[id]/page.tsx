@@ -3,19 +3,21 @@ import Player from '@/components/player';
 import localforage from 'localforage';
 import { useEffect, useState } from 'react';
 import type { StoragedVideo } from '@/types/video';
+import type { PeerChannel } from '@/types/channel';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
+import { ThickArrowRightIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
+import { Room } from '@/components/room';
 
 export default function Channel({ params }: { params: { id: string } }) {
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
   const [currentUrl, setCurrentUrl] = useState('');
+  const [channel, setChannel] = useState<PeerChannel | null>(null);
   useEffect(() => {
     if (params.id) {
       localforage
@@ -24,28 +26,41 @@ export default function Channel({ params }: { params: { id: string } }) {
           if (res) {
             setCurrentPlay(res);
             setCurrentUrl(res.playUrls[0]);
+            setChannel({
+              code: params.id,
+              name: res.vod_name,
+            });
           }
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [params.id]);
+  }, [currentUrl, params.id]);
   return (
     <div className='flex flex-col xl:p-6 p-0'>
       <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
         <Player url={currentUrl} title={currentPlay?.vod_name} />
         <Card className='flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none'>
           <CardContent className='py-5 flex flex-col gap-5 justify-between h-full items-center'>
-            <h1 className='xl:text-2xl text-xl font-medium px-36 text-center'>
-              Chatbox
-            </h1>
-            <div className='flex w-full max-w-sm items-center space-x-2'>
-              <Input placeholder='Send a message?' type='search' />
-              <Button size={'icon'}>
-                <PaperPlaneIcon />
+            <div className='justify-end px-2 flex w-full text-xl font-medium gap-2'>
+              <h1 className='xl:text-2xl text-xl font-medium px-20 text-center'>
+                ChatRoom
+              </h1>
+              <Button
+                size={'icon'}
+                className={'text-orange-500 text-xl font-medium'}
+              >
+                <PlusCircledIcon />
+              </Button>
+              <Button
+                size={'icon'}
+                className={'text-orange-500 text-xl font-medium'}
+              >
+                <ThickArrowRightIcon />
               </Button>
             </div>
+            <Room />
           </CardContent>
         </Card>
       </main>
@@ -59,7 +74,11 @@ export default function Channel({ params }: { params: { id: string } }) {
                     key={index}
                     size={'icon'}
                     onClick={() => setCurrentUrl(url)}
-                    className={url === currentUrl ? 'text-orange-500 text-xl font-medium' : ''}
+                    className={
+                      url === currentUrl
+                        ? 'text-orange-500 text-xl font-medium'
+                        : ''
+                    }
                   >
                     {index + 1}
                   </Button>
