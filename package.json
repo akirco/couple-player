@@ -33,6 +33,6 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
     "xgplayer": "^3.0.9",
-    "xgplayer-hls.js": "^3.0.9"
+    "xgplayer-hls": "^3.0.9"
   }
 }

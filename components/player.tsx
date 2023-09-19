@@ -3,7 +3,7 @@ import { useEffect, FC } from 'react';
 import XGPlayer from 'xgplayer';
 import 'xgplayer/dist/index.min.css';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import HlsPlayer from "xgplayer-hls.js";
+import HlsPlayer from "xgplayer-hls";
 import '@/styles/player.css';
 import { useRouter } from 'next/navigation';
 
