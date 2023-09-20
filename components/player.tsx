@@ -39,7 +39,7 @@ const Player: FC<PlayerProps> = ({ url, title }) => {
   useEffect(() => {
     if (xgplayer) {
       xgplayer.on('canplay', () => {
-        xgplayer.play();
+        // xgplayer.play();
       });
       xgplayer.on('timeupdate', (data) => {
         // console.log(data);

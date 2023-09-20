@@ -54,8 +54,9 @@ export function Video({
           src={video.vod_pic}
           alt='vod_cover'
           className='rounded-lg object-cover w-[200px] h-[300px] transition-opacity opacity-0 duration-1000'
-          width='200'
-          height='300'
+          width='220'
+          height='320'
+          sizes=''
           priority
           onLoadingComplete={(img) => img.classList.remove('opacity-0')}
         />

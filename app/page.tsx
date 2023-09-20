@@ -25,9 +25,11 @@ export default function Home() {
   useEffect(() => {
     localforage
       .iterate<StoragedVideo, void>(function (value, key, iterationNumber) {
-        // console.log({ key: value });
         setHistoryList((prev) => {
           if (prev) {
+            if (prev.find((video) => video.storageId === value.storageId)) {
+              return prev;
+            }
             return [...prev, value];
           } else {
             return [value];
@@ -40,6 +42,7 @@ export default function Home() {
       .catch(function (err) {
         console.log(err);
       });
+    return () => setHistoryList([]);
   }, []);
   const fetchVideos = () => {
     setIsLoading(true);
@@ -95,7 +98,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-        ) : historyList ? (
+        ) : historyList?.length ? (
           <div className='flex flex-col p-5 gap-5'>
             <h1 className='inline-flex items-center gap-1 text-2xl font-semibold justify-between'>
               <span className='inline-flex items-center gap-2'>

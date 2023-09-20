@@ -10,9 +10,22 @@ export function genStorageId() {
   return nanoid(20);
 }
 
+export function genName() {
+  return nanoid(6);
+}
+
 export async function checkApiAvailability(apiUrl: string) {
   const response = await fetch(apiUrl);
   if (response.ok) {
   } else {
   }
+}
+
+export function deduplicate<T>(arr: Array<T>): Array<T> {
+  return arr.reduce((acc: Array<T>, cur: T) => {
+    if (!acc.includes(cur)) {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
 }

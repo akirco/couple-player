@@ -7,51 +7,27 @@ import type { CurrentEpisode, PeerChannel } from '@/types/channel';
 import { Button } from '@/components/ui/button';
 import { ThickArrowRightIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { Room } from '@/components/room';
-import { useRouter } from 'next/router';
 import '@/styles/global.css';
+import Socket from '@/lib/goeasy';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import io, { Socket } from 'socket.io-client';
-let socket: Socket;
+import { Share } from '@/components/share';
 
-export default function Channel() {
+export default function Channel({ params }: { params: { id: string } }) {
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
   const [channel, setChannel] = useState<PeerChannel | null>(null);
   const [currentEpisode, setCurrentEpisode] = useState<CurrentEpisode | null>(
     null
   );
-  const router = useRouter();
-  const channelId = router.query.id as string;
-
-  const socketInitializer = async () => {
-    await fetch('/api/socket');
-    socket = io('http://localhost:3000', {
-      path: '/api/socketio',
-    });
-
-    socket.on('connect', () => {
-      const transportAtConnect = socket.io.engine.transport.name;
-      console.log(`Connected ${socket.id} with ${transportAtConnect}`);
-      socket.io.engine.on('upgrade', () => {
-        const upgradedTransport = socket.io.engine.transport.name;
-        console.log(
-          `Upgraded from ${transportAtConnect} to ${upgradedTransport}`
-        );
-      });
-    });
-
-    socket.on('newIncomingMessage', (msg) => {
-      console.log('New message in client', msg);
-    });
-  };
+  const channelId = params.id;
 
   useEffect(() => {
-    socketInitializer();
-  }, []);
+    new Socket(channelId);
+  });
 
   useEffect(() => {
     if (channelId) {
@@ -81,12 +57,6 @@ export default function Channel() {
     }
   }, [channelId]);
 
-  const handleInvite = () => {
-    if (channel) {
-      console.log(channel);
-    }
-  };
-
   return (
     <div className='flex flex-col xl:p-6 p-0'>
       <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
@@ -100,13 +70,7 @@ export default function Channel() {
               <h1 className='xl:text-2xl text-xl font-medium px-20 text-center'>
                 ChatRoom
               </h1>
-              <Button
-                size={'icon'}
-                className={'text-orange-500 text-xl font-medium'}
-                onClick={handleInvite}
-              >
-                <PlusCircledIcon />
-              </Button>
+              <Share channelId={channelId} />
               <Button
                 size={'icon'}
                 className={'text-orange-500 text-xl font-medium'}

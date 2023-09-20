@@ -25,7 +25,7 @@ function AvatarDemo() {
 
 export function Room() {
   return (
-    <Tabs defaultValue='Contacts' className='w-full h-full flex flex-col'>
+    <Tabs defaultValue='Messages' className='w-full h-full flex flex-col'>
       <TabsList className='grid w-full grid-cols-2'>
         <TabsTrigger value='Messages'>Messages</TabsTrigger>
         <TabsTrigger value='Contacts'>Contacts</TabsTrigger>
@@ -56,7 +56,7 @@ export function Room() {
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='flex w-full max-w-sm items-center space-x-2'>
+            <div className='flex w-full max-w-sm items-center space-x-2 m-auto'>
               <Input placeholder='Send a message?' type='text' />
               <Button size={'icon'}>
                 <PaperPlaneIcon />
