@@ -27,8 +27,8 @@ export function Room() {
   return (
     <Tabs defaultValue='Contacts' className='w-full h-full flex flex-col'>
       <TabsList className='grid w-full grid-cols-2'>
-        <TabsTrigger value='Contacts'>Contacts</TabsTrigger>
         <TabsTrigger value='Messages'>Messages</TabsTrigger>
+        <TabsTrigger value='Contacts'>Contacts</TabsTrigger>
       </TabsList>
       <TabsContent value='Contacts' className='flex-1'>
         <Card className='h-full flex flex-col justify-between'>

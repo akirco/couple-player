@@ -21,6 +21,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [historyList, setHistoryList] = useState<StoragedVideo[]>();
   const [isEdit, setIsEdit] = useState(false);
+
   useEffect(() => {
     localforage
       .iterate<StoragedVideo, void>(function (value, key, iterationNumber) {

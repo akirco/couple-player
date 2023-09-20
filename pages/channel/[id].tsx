@@ -3,32 +3,75 @@ import Player from '@/components/player';
 import localforage from 'localforage';
 import { useEffect, useState } from 'react';
 import type { StoragedVideo } from '@/types/video';
-import type { PeerChannel } from '@/types/channel';
+import type { CurrentEpisode, PeerChannel } from '@/types/channel';
 import { Button } from '@/components/ui/button';
 import { ThickArrowRightIcon, PlusCircledIcon } from '@radix-ui/react-icons';
+import { Room } from '@/components/room';
+import { useRouter } from 'next/router';
+import '@/styles/global.css';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { Room } from '@/components/room';
+import io, { Socket } from 'socket.io-client';
+let socket: Socket;
 
-export default function Channel({ params }: { params: { id: string } }) {
+export default function Channel() {
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
-  const [currentUrl, setCurrentUrl] = useState('');
   const [channel, setChannel] = useState<PeerChannel | null>(null);
+  const [currentEpisode, setCurrentEpisode] = useState<CurrentEpisode | null>(
+    null
+  );
+  const router = useRouter();
+  const channelId = router.query.id as string;
+
+  const socketInitializer = async () => {
+    await fetch('/api/socket');
+    socket = io('http://localhost:3000', {
+      path: '/api/socketio',
+    });
+
+    socket.on('connect', () => {
+      const transportAtConnect = socket.io.engine.transport.name;
+      console.log(`Connected ${socket.id} with ${transportAtConnect}`);
+      socket.io.engine.on('upgrade', () => {
+        const upgradedTransport = socket.io.engine.transport.name;
+        console.log(
+          `Upgraded from ${transportAtConnect} to ${upgradedTransport}`
+        );
+      });
+    });
+
+    socket.on('newIncomingMessage', (msg) => {
+      console.log('New message in client', msg);
+    });
+  };
+
   useEffect(() => {
-    if (params.id) {
+    socketInitializer();
+  }, []);
+
+  useEffect(() => {
+    if (channelId) {
       localforage
-        .getItem<StoragedVideo>(params.id)
+        .getItem<StoragedVideo>(channelId)
         .then((res) => {
           if (res) {
             setCurrentPlay(res);
-            setCurrentUrl(res.playUrls[0]);
+            setCurrentEpisode({
+              url: res.playUrls[0],
+              episode: 1,
+            });
             setChannel({
-              code: params.id,
-              name: res.vod_name,
+              peerCode: channelId,
+              peerName: 'akirco',
+              peerPlaying: res,
+              CurrentEpisode: {
+                url: res.playUrls[0],
+                episode: 1,
+              },
             });
           }
         })
@@ -36,11 +79,21 @@ export default function Channel({ params }: { params: { id: string } }) {
           console.log(err);
         });
     }
-  }, [currentUrl, params.id]);
+  }, [channelId]);
+
+  const handleInvite = () => {
+    if (channel) {
+      console.log(channel);
+    }
+  };
+
   return (
     <div className='flex flex-col xl:p-6 p-0'>
       <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
-        <Player url={currentUrl} title={currentPlay?.vod_name} />
+        <Player
+          url={currentEpisode?.url}
+          title={currentPlay?.vod_name + '-' + currentEpisode?.episode}
+        />
         <Card className='flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none'>
           <CardContent className='py-5 flex flex-col gap-5 justify-between h-full items-center'>
             <div className='justify-end px-2 flex w-full text-xl font-medium gap-2'>
@@ -50,6 +103,7 @@ export default function Channel({ params }: { params: { id: string } }) {
               <Button
                 size={'icon'}
                 className={'text-orange-500 text-xl font-medium'}
+                onClick={handleInvite}
               >
                 <PlusCircledIcon />
               </Button>
@@ -73,9 +127,14 @@ export default function Channel({ params }: { params: { id: string } }) {
                   <Button
                     key={index}
                     size={'icon'}
-                    onClick={() => setCurrentUrl(url)}
+                    onClick={() =>
+                      setCurrentEpisode({
+                        url,
+                        episode: index + 1,
+                      })
+                    }
                     className={
-                      url === currentUrl
+                      url === currentEpisode?.url
                         ? 'text-orange-500 text-xl font-medium'
                         : ''
                     }
