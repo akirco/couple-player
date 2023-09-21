@@ -14,6 +14,12 @@ export function genName() {
   return nanoid(6);
 }
 
+export function baseUrl() {
+  return process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : process.env['VERCEL_URL'];
+}
+
 export async function checkApiAvailability(apiUrl: string) {
   const response = await fetch(apiUrl);
   if (response.ok) {

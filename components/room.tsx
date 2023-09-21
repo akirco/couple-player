@@ -58,8 +58,11 @@ export function Room() {
           <CardContent className='space-y-2'>
             <div className='flex w-full max-w-sm items-center space-x-2 m-auto'>
               <Input placeholder='Send a message?' type='text' />
-              <Button size={'icon'}>
-                <PaperPlaneIcon />
+              <Button
+                size={'icon'}
+                className='text-orange-500 text-xl font-medium'
+              >
+                <PaperPlaneIcon className='w-4 h-4' />
               </Button>
             </div>
           </CardContent>
