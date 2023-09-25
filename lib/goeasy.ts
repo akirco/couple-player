@@ -1,5 +1,5 @@
 import GoEasy from 'goeasy';
-import { genName } from '@/lib/utils';
+import { nanoid } from 'nanoid';
 
 export default class Socket {
   private goEasy: GoEasy;
@@ -13,14 +13,11 @@ export default class Socket {
         appkey: 'BC-501436916b5e4006bc7fb7efb5f3dd78',
         modules: ['pubsub'],
       });
-    this.connectGoEasy();
-    this.subscribe();
-    this.subscribePresence();
     global.goEasy = this.goEasy;
   }
 
   public connectGoEasy() {
-    const id = genName();
+    const id = nanoid(6);
     this.goEasy.connect({
       id: id,
       data: {
@@ -92,5 +89,24 @@ export default class Socket {
         },
       });
     }
+  }
+
+  public getNewer() {
+    this.goEasy.pubsub.hereNow({
+      channel: 'my_channel',
+      limit: 1,
+      onSuccess: function (response: {}) {
+        alert('hereNow response: ' + JSON.stringify(response)); //json格式的response
+      },
+      onFailed: function (error: { code: string; content: string }) {
+        //获取失败
+        console.log(
+          'Failed to obtain online clients, code:' +
+            error.code +
+            ',error:' +
+            error.content
+        );
+      },
+    });
   }
 }

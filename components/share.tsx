@@ -11,12 +11,26 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import QrCode from './qrcode';
-
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { baseUrl } from '@/lib/utils';
+import Peer from 'peerjs';
+import { nanoid } from 'nanoid';
+import { useSessionStorage } from 'react-use';
+
+const usePeer = (id: string): Peer | undefined => {
+  if (typeof navigator !== 'undefined') {
+    const Peer = require('peerjs').default;
+    const peer = new Peer(id);
+    return peer;
+  }
+  return undefined;
+};
 
 export function Share({ channelId }: { channelId: string }) {
   const [isCopied, setIsCopied] = useState(false);
+  const peerRef = useRef<Peer>();
+  const [peerId, _setPeerId] = useSessionStorage('peerId', nanoid(8));
+
   const copy = async () => {
     await navigator.clipboard.writeText(`${baseUrl()}/channel/${channelId}`);
     setIsCopied(true);
@@ -24,6 +38,20 @@ export function Share({ channelId }: { channelId: string }) {
       setIsCopied(false);
     }, 1000);
   };
+
+  useEffect(() => {
+    if (peerRef.current === undefined) {
+      if (typeof navigator !== 'undefined') {
+        const Peer = require('peerjs').default;
+        peerRef.current = new Peer(peerId);
+      }
+    } else {
+      peerRef.current.on('open', (id) => {
+        console.log('peerId:', id);
+      });
+    }
+  }, [peerId]);
+
   return (
     <Dialog open={isCopied} onOpenChange={setIsCopied}>
       <DialogTrigger asChild>

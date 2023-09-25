@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 

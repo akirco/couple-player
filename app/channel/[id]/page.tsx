@@ -5,10 +5,9 @@ import { useEffect, useState } from 'react';
 import type { StoragedVideo } from '@/types/video';
 import type { CurrentEpisode, PeerChannel } from '@/types/channel';
 import { Button } from '@/components/ui/button';
-import { ThickArrowRightIcon, PlusCircledIcon } from '@radix-ui/react-icons';
+import { ThickArrowRightIcon } from '@radix-ui/react-icons';
 import { Room } from '@/components/room';
 import '@/styles/global.css';
-import Socket from '@/lib/goeasy';
 import {
   Card,
   CardContent,
@@ -24,10 +23,6 @@ export default function Channel({ params }: { params: { id: string } }) {
     null
   );
   const channelId = params.id;
-
-  useEffect(() => {
-    new Socket(channelId);
-  });
 
   useEffect(() => {
     if (channelId) {
