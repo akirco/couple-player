@@ -62,6 +62,7 @@ export function Room() {
               <Input
                 placeholder='Send a message?'
                 type='text'
+                value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
               <Button

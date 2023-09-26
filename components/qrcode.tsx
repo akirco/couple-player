@@ -29,7 +29,13 @@ const useQRCodeStyling = (
   return null;
 };
 
-const QrCode = ({ channelId }: { channelId: string }) => {
+const QrCode = ({
+  channelId,
+  peerId,
+}: {
+  channelId: string;
+  peerId: string;
+}) => {
   const qrCode = useQRCodeStyling(qrOptions);
   const ref = useRef<any>(null);
 
@@ -38,8 +44,10 @@ const QrCode = ({ channelId }: { channelId: string }) => {
   }, [ref, qrCode]);
 
   useEffect(() => {
-    qrCode?.update({ data: `${baseUrl()}/channel/${channelId}` });
-  }, [qrCode, channelId]);
+    qrCode?.update({
+      data: `${baseUrl()}/channel/${channelId}/?from=${peerId}`,
+    });
+  }, [qrCode, channelId, peerId]);
 
   return (
     <div className='m-3 my-5 flex justify-center items-center'>

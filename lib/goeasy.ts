@@ -7,7 +7,7 @@ export default class Socket {
     this.channelId = channelId;
     this.goEasy = GoEasy.getInstance({
       host: 'hangzhou.goeasy.io',
-      appkey: 'BC-2b065aa130814fd8b682c949dba1ed37',
+      appkey: 'BC-8f6a6921c12f4a60b83f408fd1cc10b5',
       modules: ['pubsub'],
     });
   }

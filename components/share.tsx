@@ -7,7 +7,7 @@ import { baseUrl } from '@/lib/utils';
 import Peer from 'peerjs';
 import { nanoid } from 'nanoid';
 import { useSessionStorage } from 'react-use';
-import Socket from '@/lib/goeasy';
+// import Socket from '@/lib/goeasy';
 import {
   Dialog,
   DialogContent,
@@ -21,15 +21,19 @@ import { PeerData, Presence } from '@/types/channel';
 import localforage from 'localforage';
 import { StoragedVideo } from '@/types/video';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
+import { useSearchParams } from 'next/navigation';
 
 export function Share({ channelId }: { channelId: string }) {
   const [isCopied, setIsCopied] = useState(false);
   const peerRef = useRef<Peer>();
   const [peerId, _setPeerId] = useSessionStorage('peerId', nanoid(8));
-  const [connPeerId, setConnPeerId] = useState('');
+  const [connPeerId, setConnPeerId] = useState<string | null>(null);
+  const params = useSearchParams();
 
   const copy = async () => {
-    await navigator.clipboard.writeText(`${baseUrl()}/channel/${channelId}`);
+    await navigator.clipboard.writeText(
+      `${baseUrl()}/channel/${channelId}/?from=${peerId}`
+    );
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
@@ -44,19 +48,23 @@ export function Share({ channelId }: { channelId: string }) {
       }
     } else {
       peerRef.current.on('open', (id) => {
-        const io = new Socket(channelId);
-        io.connectGoEasy(id);
-        io.subscribe();
-        io.subscribePresence((e: Presence) => {
-          if (
-            e.action === 'join' &&
-            e.channel === channelId &&
-            e.amount > 1 &&
-            e.member.data.peerId !== peerId
-          ) {
-            setConnPeerId(e.member.data.peerId);
-          }
-        });
+        const connectId = params.get('from');
+        if (connectId) {
+          setConnPeerId(connectId);
+        }
+        // const io = new Socket(channelId);
+        // io.connectGoEasy(id);
+        // io.subscribe();
+        // io.subscribePresence((e: Presence) => {
+        //   if (
+        //     e.action === 'join' &&
+        //     e.channel === channelId &&
+        //     e.amount > 1 &&
+        //     e.member.data.peerId !== peerId
+        //   ) {
+        //     setConnPeerId(e.member.data.peerId);
+        //   }
+        // });
       });
       peerRef.current.on('connection', (connection) => {
         console.log('收到新连接：' + connection.peer);
@@ -79,7 +87,7 @@ export function Share({ channelId }: { channelId: string }) {
       peerRef.current.on('error', (err) => {
         console.error(err);
       });
-      if (connPeerId.length > 0) {
+      if (connPeerId !== null) {
         const connection = peerRef.current.connect(connPeerId);
         window.peerConnection = connection;
         connection.on('open', () => {
@@ -104,7 +112,7 @@ export function Share({ channelId }: { channelId: string }) {
         });
       }
     }
-  }, [channelId, connPeerId, peerId]);
+  }, [channelId, connPeerId, params, peerId]);
 
   return (
     <Dialog open={isCopied} onOpenChange={setIsCopied}>
@@ -120,7 +128,7 @@ export function Share({ channelId }: { channelId: string }) {
             Copy provided address and send it to the other person...
           </DialogDescription>
         </DialogHeader>
-        <QrCode channelId={channelId} />
+        <QrCode channelId={channelId} peerId={peerId} />
         <DialogFooter className='!flex !justify-center !items-center'>
           <Button onClick={copy}>Copy channel link</Button>
         </DialogFooter>
