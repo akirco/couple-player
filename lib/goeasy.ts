@@ -1,28 +1,23 @@
 import GoEasy from 'goeasy';
-import { nanoid } from 'nanoid';
 
 export default class Socket {
   private goEasy: GoEasy;
   private channelId: string;
   constructor(channelId: string) {
     this.channelId = channelId;
-    this.goEasy =
-      global.goEasy ||
-      GoEasy.getInstance({
-        host: 'hangzhou.goeasy.io',
-        appkey: 'BC-501436916b5e4006bc7fb7efb5f3dd78',
-        modules: ['pubsub'],
-      });
-    global.goEasy = this.goEasy;
+    this.goEasy = GoEasy.getInstance({
+      host: 'hangzhou.goeasy.io',
+      appkey: 'BC-2b065aa130814fd8b682c949dba1ed37',
+      modules: ['pubsub'],
+    });
   }
 
-  public connectGoEasy() {
-    const id = nanoid(6);
+  public connectGoEasy(peerId: string) {
     this.goEasy.connect({
-      id: id,
+      id: peerId,
       data: {
-        avatar: `https://api.multiavatar.com/${id}.png`,
-        nickname: id,
+        avatar: `https://api.multiavatar.com/${peerId}.png`,
+        peerId: peerId,
       },
       onProgress: (attempts: any) => {
         console.log('连接或自动重连中!', attempts);
@@ -55,13 +50,46 @@ export default class Socket {
       },
     });
   }
-  public subscribePresence() {
+
+  public unSubcribe() {
+    this.goEasy.pubsub.unsubscribe({
+      channel: this.channelId,
+      onSuccess: function () {
+        alert('订阅取消成功。');
+      },
+      onFailed: function (error: any) {
+        alert(
+          '取消订阅失败，错误编码：' +
+            error.code +
+            ' 错误信息：' +
+            error.content
+        );
+      },
+    });
+  }
+
+  public disconnect(peerId: string) {
+    //断开连接
+    this.goEasy.disconnect({
+      onSuccess: function () {
+        console.log('GoEasy disconnect successfully.');
+      },
+      onFailed: function (error: any) {
+        console.log(
+          'Failed to disconnect GoEasy, code:' +
+            error.code +
+            ',error:' +
+            error.content
+        );
+      },
+    });
+  }
+
+  public subscribePresence(onPresence: (presenceEvent: any) => void) {
     this.goEasy.pubsub.subscribePresence({
       channel: this.channelId,
-      membersLimit: 20,
-      onPresence: function (presenceEvent: any) {
-        console.log('Presence events: ', JSON.stringify(presenceEvent));
-      },
+      membersLimit: 1,
+      onPresence: onPresence,
       onSuccess: function () {
         console.log('监听成功!');
       },
@@ -93,10 +121,10 @@ export default class Socket {
 
   public getNewer() {
     this.goEasy.pubsub.hereNow({
-      channel: 'my_channel',
-      limit: 1,
+      channel: this.channelId,
+      limit: 2,
       onSuccess: function (response: {}) {
-        alert('hereNow response: ' + JSON.stringify(response)); //json格式的response
+        console.log('hereNew response: ' + JSON.stringify(response)); //json格式的response
       },
       onFailed: function (error: { code: string; content: string }) {
         //获取失败

@@ -1,5 +1,4 @@
 'use client';
-import Player from '@/components/player';
 import localforage from 'localforage';
 import { useEffect, useState } from 'react';
 import type { StoragedVideo } from '@/types/video';
@@ -15,16 +14,24 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Share } from '@/components/share';
+import { peerSend } from '@/lib/peerEventListener';
+import dynamic from 'next/dynamic';
 
 export default function Channel({ params }: { params: { id: string } }) {
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
-  const [channel, setChannel] = useState<PeerChannel | null>(null);
   const [currentEpisode, setCurrentEpisode] = useState<CurrentEpisode | null>(
     null
   );
   const channelId = params.id;
+  const XGPlayer = dynamic(() => import('@/components/player'), {
+    ssr: false,
+  });
 
   useEffect(() => {
+    // @ts-ignore
+    window.setCurrentEpisode = setCurrentEpisode;
+    // @ts-ignore
+    window.setCurrentPlay = setCurrentPlay;
     if (channelId) {
       localforage
         .getItem<StoragedVideo>(channelId)
@@ -35,15 +42,6 @@ export default function Channel({ params }: { params: { id: string } }) {
               url: res.playUrls[0],
               episode: 1,
             });
-            setChannel({
-              peerCode: channelId,
-              peerName: 'akirco',
-              peerPlaying: res,
-              CurrentEpisode: {
-                url: res.playUrls[0],
-                episode: 1,
-              },
-            });
           }
         })
         .catch((err) => {
@@ -52,10 +50,18 @@ export default function Channel({ params }: { params: { id: string } }) {
     }
   }, [channelId]);
 
+  const episodeChange = (url: string, index: number) => {
+    setCurrentEpisode({
+      url,
+      episode: index + 1,
+    });
+    peerSend({ type: 'episodeChange', value: '' });
+  };
+
   return (
     <div className='flex flex-col xl:p-6 p-0'>
       <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
-        <Player
+        <XGPlayer
           url={currentEpisode?.url}
           title={currentPlay?.vod_name + '-' + currentEpisode?.episode}
         />
@@ -86,12 +92,16 @@ export default function Channel({ params }: { params: { id: string } }) {
                   <Button
                     key={index}
                     size={'icon'}
-                    onClick={() =>
+                    onClick={() => {
                       setCurrentEpisode({
                         url,
                         episode: index + 1,
-                      })
-                    }
+                      });
+                      peerSend({
+                        type: 'episodeChange',
+                        value: { url, exisode: index + 1 },
+                      });
+                    }}
                     className={
                       url === currentEpisode?.url
                         ? 'text-orange-500 text-xl font-medium'

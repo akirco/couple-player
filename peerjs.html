@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PeerJS 聊天室</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs/dist/peerjs.min.js"></script>
+  </head>
+  <body>
+    <h1>PeerJS 聊天室</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" />
+    <button onclick="sendMessage()">发送</button>
+
+    <script>
+      let globalConn;
+      // 生成一个随机的用户ID
+      const userId = Math.random().toString(36).substring(7);
+
+      // 创建一个Peer对象
+      const peer = new Peer(userId);
+
+      // 当Peer连接到PeerJS服务器时触发
+      peer.on('open', (id) => {
+        console.log('已连接到PeerJS服务器，用户ID为：' + id);
+      });
+
+      // 当有其他Peer尝试连接到当前Peer时触发
+      peer.on('connection', (conn) => {
+        console.log('收到新连接：' + conn.peer);
+        globalConn = conn;
+
+        // 接受连接
+        conn.on('open', () => {
+          console.log('已接受连接：' + conn.peer);
+
+          // 监听接收到的消息
+          conn.on('data', (data) => {
+            showMessage(conn.peer, data);
+          });
+        });
+      });
+
+      // 连接到其他Peer
+      function connectToPeer() {
+        const peerId = document.getElementById('peerIdInput').value;
+
+        // 创建一个连接
+        const conn = peer.connect(peerId);
+
+        // 监听连接打开事件
+        conn.on('open', () => {
+          console.log('已连接到Peer：' + conn.peer);
+
+          // 监听接收到的消息
+          conn.on('data', (data) => {
+            showMessage(conn.peer, data);
+          });
+
+          // 发送消息给对方Peer
+        });
+        globalConn = conn;
+      }
+
+      function sendMessage() {
+        const message = document.getElementById('messageInput').value;
+        showMessage(userId, message);
+        if (globalConn) {
+          globalConn.send(message);
+        }
+      }
+
+      // 显示消息
+      function showMessage(sender, message) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.innerHTML =
+          '<strong>' + sender + ':</strong> ' + message;
+        messagesDiv.appendChild(messageElement);
+      }
+    </script>
+
+    <h2>连接其他Peer</h2>
+    <input type="text" id="peerIdInput" placeholder="输入Peer的ID" />
+    <button onclick="connectToPeer()">连接</button>
+  </body>
+</html>

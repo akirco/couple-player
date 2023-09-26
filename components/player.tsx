@@ -6,6 +6,9 @@ import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import HlsPlayer from 'xgplayer-hls.js';
 import '@/styles/player.css';
 import { useRouter } from 'next/navigation';
+import { xgplayerListener } from '@/lib/peerEventListener';
+import Danmu from 'xgplayer/es/plugins/danmu';
+import 'xgplayer/es/plugins/danmu/index.css';
 
 interface PlayerProps {
   url?: string;
@@ -14,13 +17,12 @@ interface PlayerProps {
 
 const Player: FC<PlayerProps> = ({ url, title }) => {
   const router = useRouter();
-  const [xgplayer, setXgplayer] = useState<XGPlayer | null>(null);
 
   useEffect(() => {
     const xgplayer = new XGPlayer({
       id: 'xgplayer',
       url,
-      plugins: [HlsPlayer],
+      plugins: [HlsPlayer, Danmu],
       width: '100%',
       height: '100%',
       fluid: true,
@@ -32,20 +34,14 @@ const Player: FC<PlayerProps> = ({ url, title }) => {
       playsinline: true,
       useHls: true,
     });
-    setXgplayer(xgplayer);
+    if (typeof window !== undefined) {
+      window.xgplayer = xgplayer;
+    }
+    xgplayerListener();
+
     return () => xgplayer.destroy();
   }, [url]);
 
-  useEffect(() => {
-    if (xgplayer) {
-      xgplayer.on('canplay', () => {
-        // xgplayer.play();
-      });
-      xgplayer.on('timeupdate', (data) => {
-        // console.log(data);
-      });
-    }
-  }, [xgplayer]);
   return (
     <>
       <div className='hover:bg-opacity-40 flex absolute p-4 flex-row opacity-0 hover:opacity-100 z-40 items-center gap-8 bg-black bg-opacity-0'>
