@@ -13,7 +13,6 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { Share } from '@/components/share';
 import { peerSend } from '@/lib/peerEventListener';
 import dynamic from 'next/dynamic';
 
@@ -26,7 +25,9 @@ export default function Channel({ params }: { params: { id: string } }) {
   const XGPlayer = dynamic(() => import('@/components/player'), {
     ssr: false,
   });
-
+  const Share = dynamic(() => import('@/components/share'), {
+    ssr: false,
+  });
   useEffect(() => {
     // @ts-ignore
     window.setCurrentEpisode = setCurrentEpisode;

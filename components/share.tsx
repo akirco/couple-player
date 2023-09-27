@@ -5,7 +5,6 @@ import QrCode from './qrcode';
 import { useEffect, useRef, useState } from 'react';
 import { baseUrl } from '@/lib/utils';
 import Peer from 'peerjs';
-import { nanoid } from 'nanoid';
 import { useSessionStorage } from 'react-use';
 // import Socket from '@/lib/goeasy';
 import {
@@ -17,22 +16,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { PeerData, Presence } from '@/types/channel';
+import { PeerData } from '@/types/channel';
 import localforage from 'localforage';
 import { StoragedVideo } from '@/types/video';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
 import { useSearchParams } from 'next/navigation';
 
-export function Share({ channelId }: { channelId: string }) {
+export default function Share({ channelId }: { channelId: string }) {
   const [isCopied, setIsCopied] = useState(false);
   const peerRef = useRef<Peer>();
-  const [peerId, _setPeerId] = useSessionStorage('peerId', nanoid(8));
+  const userId = Math.random().toString(36).substring(7);
+  const [peerId, _setPeerId] = useSessionStorage('peerId', userId);
   const [connPeerId, setConnPeerId] = useState<string | null>(null);
   const params = useSearchParams();
 
   const copy = async () => {
     await navigator.clipboard.writeText(
-      `${baseUrl()}/channel/${channelId}/?from=${peerId}`
+      `${baseUrl()}/channel/${channelId}?from=${peerId}`
     );
     setIsCopied(true);
     setTimeout(() => {
@@ -49,6 +49,7 @@ export function Share({ channelId }: { channelId: string }) {
     } else {
       peerRef.current.on('open', (id) => {
         const connectId = params.get('from');
+        alert(connectId);
         if (connectId) {
           setConnPeerId(connectId);
         }
@@ -88,6 +89,7 @@ export function Share({ channelId }: { channelId: string }) {
         console.error(err);
       });
       if (connPeerId !== null) {
+        alert(connPeerId);
         const connection = peerRef.current.connect(connPeerId);
         window.peerConnection = connection;
         connection.on('open', () => {
@@ -112,6 +114,9 @@ export function Share({ channelId }: { channelId: string }) {
         });
       }
     }
+    return () => {
+      // peerRef.current?.disconnect();
+    };
   }, [channelId, connPeerId, params, peerId]);
 
   return (

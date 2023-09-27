@@ -17,7 +17,7 @@ export function genName() {
 export function baseUrl() {
   return process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000'
-    : process.env['VERCEL_URL'];
+    : 'https://peer.extrameta.cn';
 }
 
 export async function checkApiAvailability(apiUrl: string) {

@@ -45,7 +45,7 @@ const QrCode = ({
 
   useEffect(() => {
     qrCode?.update({
-      data: `${baseUrl()}/channel/${channelId}/?from=${peerId}`,
+      data: `${baseUrl()}/channel/${channelId}?from=${peerId}`,
     });
   }, [qrCode, channelId, peerId]);
 
