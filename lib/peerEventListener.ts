@@ -17,9 +17,14 @@ export const xgplayerListener = () => {
   });
   window.xgplayer?.on(Events.USER_ACTION, (data) => {
     console.log(data);
-
     if (data.action === 'click' || data.action === 'dragend') {
       peerSend({ type: 'vtimeupdate', value: data.currentTime });
+    }
+    if (data.action === 'change_rate') {
+      peerSend({
+        type: 'playbackRateChange',
+        value: data.props[0].playbackRate.to,
+      });
     }
   });
 };
@@ -35,10 +40,10 @@ export const peerDataHandler = (data: PeerData) => {
         style: {
           color: '#F97316',
           fontSize: '20px',
-          border: 'solid 1px #7CA2E3',
+          border: '2px solid #7CA2E3',
           borderRadius: '50px',
           padding: '5px 11px',
-          backgroundColor: 'rgba(0,0,0,0.4)',
+          backgroundColor: 'rgba(0,0,0,0.3)',
         },
       });
       break;
@@ -59,6 +64,8 @@ export const peerDataHandler = (data: PeerData) => {
     case 'episodeChange':
       // @ts-ignore
       window.setCurrentEpisode(data.value);
+    case 'playbackRateChange':
+      window.xgplayer!.playbackRate = data.value;
     default:
       break;
   }

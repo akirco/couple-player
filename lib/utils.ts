@@ -1,17 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { nanoid } from 'nanoid';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export function genStorageId() {
-  return nanoid(20);
-}
-
-export function genName() {
-  return nanoid(6);
 }
 
 export function baseUrl() {

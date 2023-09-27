@@ -1,5 +1,4 @@
 import type { StoragedVideo, VideoList } from '@/types/video';
-import { genStorageId } from '@/lib/utils';
 import Image from 'next/image';
 import localforage from 'localforage';
 import { useRouter } from 'next/navigation';
@@ -9,6 +8,7 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
+import { nanoid } from 'nanoid';
 
 export function Video({
   video,
@@ -19,7 +19,7 @@ export function Video({
 }) {
   const regex = /https:\/\/[^#]+/g;
   const playUrls = video.vod_play_url.match(regex);
-  const storageId = genStorageId();
+  const storageId = nanoid(16);
   const router = useRouter();
   let playVideo: () => void;
   if (isStoraged) {

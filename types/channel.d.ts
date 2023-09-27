@@ -47,12 +47,13 @@ export interface Presence {
 
 export interface PeerData {
   type:
+    | 'vready'
     | 'vplay'
     | 'vpause'
     | 'vstorage'
     | 'vtimeupdate'
     | 'message'
     | 'episodeChange'
-    | 'storagedReload';
+    | 'playbackRateChange';
   value: any;
 }

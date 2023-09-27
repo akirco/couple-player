@@ -10,6 +10,7 @@ import '@/styles/global.css';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
 import dynamic from 'next/dynamic';
 import { useSessionStorage, useSearchParam } from 'react-use';
+
 import {
   Card,
   CardContent,
@@ -19,7 +20,6 @@ import {
 
 export default function Channel({ params }: { params: { id: string } }) {
   const from = useSearchParam('from');
-
   const userId = Math.random().toString(36).substring(3);
   const [peerId, _setPeerId] = useSessionStorage('peerId', userId);
   const [connPeerId, setConnPeerId] = useState<string | null>(null);
@@ -47,6 +47,7 @@ export default function Channel({ params }: { params: { id: string } }) {
         // 监听接收到的消息
         connection.on('data', (data) => {
           peerDataHandler(data as PeerData);
+
           console.log(
             'response-get data from:',
             connection.peer,
