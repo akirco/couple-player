@@ -1,6 +1,6 @@
 'use client';
 import localforage from 'localforage';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { StoragedVideo } from '@/types/video';
 import type { CurrentEpisode, PeerData } from '@/types/channel';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,8 @@ import { Room } from '@/components/room';
 import '@/styles/global.css';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
 import dynamic from 'next/dynamic';
-import type Peer from 'peerjs';
 // import Socket from '@/lib/goeasy';
-import { useSessionStorage } from 'react-use';
-import { useSearchParams } from 'next/navigation';
+import { useSessionStorage, useSearchParam } from 'react-use';
 import {
   Card,
   CardContent,
@@ -21,8 +19,8 @@ import {
 } from '@/components/ui/card';
 
 export default function Channel({ params }: { params: { id: string } }) {
-  const param = useSearchParams();
-  const peerRef = useRef<Peer>();
+  const from = useSearchParam('from');
+
   const userId = Math.random().toString(36).substring(3);
   const [peerId, _setPeerId] = useSessionStorage('peerId', userId);
   const [connPeerId, setConnPeerId] = useState<string | null>(null);
@@ -40,72 +38,67 @@ export default function Channel({ params }: { params: { id: string } }) {
     ssr: false,
   });
 
-  useEffect(() => {
-    if (peerRef.current === undefined) {
-      if (typeof navigator !== 'undefined') {
-        const Peer = require('peerjs').default;
-        peerRef.current = new Peer(peerId);
-      }
-    } else {
-      peerRef.current.on('open', (id) => {
-        const connectId = param.get('from');
-        if (connectId) {
-          setConnPeerId(connectId);
+  const peerListener = useCallback(() => {
+    window.peer?.on('connection', (connection) => {
+      console.log('收到新连接from：' + connection.peer);
+      window.peerConnection = connection;
+      // 接受连接
+      connection.on('open', () => {
+        console.log('已接受连接：' + connection.peer);
+        // 监听接收到的消息
+        connection.on('data', (data) => {
+          peerDataHandler(data as PeerData);
+          console.log(
+            'response-get data from:',
+            connection.peer,
+            ' content:',
+            data
+          );
+        });
+      });
+    });
+    window.peer?.on('error', (err) => {
+      console.error('peer error:', err);
+    });
+  }, []);
+
+  const InitPeer = useCallback(() => {
+    if (!typeof window !== undefined) {
+      import('peerjs').then(({ default: Peer }) => {
+        if (!window.peer) {
+          window.peer = new Peer(peerId, {
+            debug: 3,
+          });
+          window.peer.on('open', (id) => {
+            if (from) {
+              setConnPeerId(from);
+            }
+            peerListener();
+          });
         }
-        // const io = new Socket(channelId);
-        // io.connectGoEasy(id);
-        // io.subscribe();
-        // io.subscribePresence((e: Presence) => {
-        //   if (
-        //     e.action === 'join' &&
-        //     e.channel === channelId &&
-        //     e.amount > 1 &&
-        //     e.member.data.peerId !== peerId
-        //   ) {
-        //     setConnPeerId(e.member.data.peerId);
-        //   }
-        // });
       });
-      peerRef.current.on('connection', (connection) => {
-        console.log('收到新连接from：' + connection.peer);
-        window.peerConnection = connection;
-        setConnPeerId(connection.peer);
-        // 接受连接
-        connection.on('open', () => {
-          console.log('已接受连接：' + connection.peer);
-          // 监听接收到的消息
-          connection.on('data', (data) => {
-            peerDataHandler(data as PeerData);
-            console.log(
-              'response-get data from:',
-              connection.peer,
-              ' content:',
-              data
-            );
-          });
-        });
-      });
-      peerRef.current.on('error', (err) => {
-        console.error(err);
-      });
-      if (connPeerId !== null) {
-        const connection = peerRef.current.connect(connPeerId);
-        window.peerConnection = connection;
-        connection.on('open', () => {
-          console.log('已连接到Peer to：' + connection.peer);
-          connection.on('data', (data) => {
-            peerDataHandler(data as PeerData);
-            console.log(
-              'request-get data from:',
-              connection.peer,
-              ' content:',
-              data
-            );
-          });
-        });
-      }
     }
-  }, [connPeerId, param, peerId, setConnPeerId]);
+  }, [from, peerId, peerListener]);
+
+  useEffect(() => {
+    InitPeer();
+    if (connPeerId !== null) {
+      const connection = window.peer?.connect(connPeerId);
+      window.peerConnection = connection;
+      connection?.on('open', () => {
+        console.log('已连接到Peer to：' + connection.peer);
+        connection.on('data', (data) => {
+          peerDataHandler(data as PeerData);
+          console.log(
+            'request-get data from:',
+            connection.peer,
+            ' content:',
+            data
+          );
+        });
+      });
+    }
+  }, [InitPeer, connPeerId]);
 
   useEffect(() => {
     // @ts-ignore
