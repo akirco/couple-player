@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, FC, useState } from 'react';
+import { useEffect, FC, useState, MutableRefObject } from 'react';
 import XGPlayer from 'xgplayer';
 import 'xgplayer/dist/index.min.css';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
@@ -34,11 +34,9 @@ const Player: FC<PlayerProps> = ({ url, title }) => {
       playsinline: true,
       useHls: true,
     });
-    if (typeof window !== undefined) {
-      window.xgplayer = xgplayer;
-    }
-    xgplayerListener();
 
+    window.xgplayer = xgplayer;
+    xgplayerListener();
     return () => xgplayer.destroy();
   }, [url]);
 

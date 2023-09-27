@@ -1,6 +1,5 @@
-import GoEasy from '@/lib/goeasy';
-import { DataConnection } from 'peerjs';
-import XGPlayer from 'xgplayer';
+import type { DataConnection } from 'peerjs';
+import type XGPlayer from 'xgplayer';
 
 declare global {
   namespace globalThis {

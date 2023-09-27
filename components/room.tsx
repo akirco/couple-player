@@ -12,8 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { peerSend } from '@/lib/peerEventListener';
+// import { peerSend } from '@/lib/peerEventListener';
 import { useState } from 'react';
+import { PeerData } from '@/types/channel';
+import { peerSend } from '@/lib/peerEventListener';
 
 function AvatarDemo() {
   return (
