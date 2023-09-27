@@ -1,26 +1,43 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Intro
+> A sync-video player with you buddy , basd on `webrtc`([peer.js](https://peerjs.com))!
+
+<video src="./preview.mp4" controls></video>
+
+## features
+
+- completed
+  - ...
+
+- plan
+  - add video source   
+    - youtube
+    - bilibili
+  - chat
+    - emoji
+    - danmu optmize
+      
 ## Tips
 
 **暂时没开发完整，别 clone 玩了，昨天用的 api dou 被封了**
 
-## Getting Started
+**本来是想写聊天同步播放视频的房间的，但是使用的是peerjs,客户端是可以实现的但是比较复杂，我觉得应该交给后端实现**
 
-First, run the development server:
+**next.js prod 不支持websocket**
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/akirco/couple-player.git
+
+pnpm i
+
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
