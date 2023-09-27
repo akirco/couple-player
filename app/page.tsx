@@ -56,6 +56,7 @@ export default function Home() {
         response.json().then((res) => {
           setIsLoading(false);
           setVideoList(res.list);
+          setVname('');
         });
       });
     }
@@ -78,7 +79,11 @@ export default function Home() {
           <Input
             placeholder='What do you want to watch?'
             type='search'
+            value={vname}
             onChange={(e) => setVname(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && vname.length > 0) fetchVideos();
+            }}
           />
           <Button onClick={fetchVideos}>Search</Button>
         </div>

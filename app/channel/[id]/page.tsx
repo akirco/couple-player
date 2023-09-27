@@ -9,7 +9,6 @@ import { Room } from '@/components/room';
 import '@/styles/global.css';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
 import dynamic from 'next/dynamic';
-// import Socket from '@/lib/goeasy';
 import { useSessionStorage, useSearchParam } from 'react-use';
 import {
   Card,

@@ -28,6 +28,10 @@ function AvatarDemo() {
 
 export function Room() {
   const [message, setMessage] = useState('');
+  const sendMsg = () => {
+    peerSend({ type: 'message', value: message });
+    setMessage('');
+  };
   return (
     <Tabs defaultValue='Messages' className='w-full h-full flex flex-col'>
       <TabsList className='grid w-full grid-cols-2'>
@@ -65,14 +69,14 @@ export function Room() {
                 placeholder='Send a message?'
                 type='text'
                 value={message}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && message.length > 0) sendMsg();
+                }}
                 onChange={(e) => setMessage(e.target.value)}
               />
               <Button
                 size={'icon'}
-                onClick={() => {
-                  peerSend({ type: 'message', value: message });
-                  setMessage('');
-                }}
+                onClick={sendMsg}
                 className='text-orange-500 text-xl font-medium'
               >
                 <PaperPlaneIcon className='w-4 h-4' />

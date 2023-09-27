@@ -34,11 +34,11 @@ export const peerDataHandler = (data: PeerData) => {
         txt: data.value,
         style: {
           color: '#F97316',
-          fontSize: '25px',
-          border: '1px solid #F97316',
-          borderRadius: '6px',
-          padding: '5px',
-          backgroundColor: 'rgba(255,255,255,0.4)',
+          fontSize: '20px',
+          border: 'solid 1px #7CA2E3',
+          borderRadius: '50px',
+          padding: '5px 11px',
+          backgroundColor: 'rgba(0,0,0,0.4)',
         },
       });
       break;
