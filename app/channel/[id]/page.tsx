@@ -29,17 +29,14 @@ export default function Channel({ params }: { params: { id: string } }) {
     null
   );
   const channelId = params.id;
+  const currentPlayRef = useRef(currentPlay);
 
   const XGPlayer = dynamic(() => import('@/components/player/xg'), {
     ssr: false,
   });
-
   const Share = dynamic(() => import('@/components/sharing'), {
     ssr: false,
   });
-
-  // Inside your Channel component
-  const currentPlayRef = useRef(currentPlay);
 
   useEffect(() => {
     if (!from) {
@@ -78,7 +75,7 @@ export default function Channel({ params }: { params: { id: string } }) {
     window.peer?.on('error', (err) => {
       console.error('peer error:', err);
     });
-  }, [currentPlayRef]);
+  }, []);
 
   const InitPeer = useCallback(() => {
     if (!typeof window !== undefined) {
@@ -144,7 +141,7 @@ export default function Channel({ params }: { params: { id: string } }) {
           console.log(err);
         });
     }
-  }, [channelId]);
+  }, [channelId, localforage]);
 
   return (
     <div className="flex flex-col xl:p-6 p-0">

@@ -63,6 +63,11 @@ export const peerDataHandler = (data: PeerData) => {
       console.log(data.value);
       // @ts-ignore
       window.setCurrentPlay(data.value);
+      // @ts-ignore
+      window.setCurrentEpisode({
+        url: data.value.playUrls[0],
+        episode: 1,
+      });
       // useLocalForage()?.setItem(data.value.storageId, data.value);
       break;
     case 'vtimeupdate':
