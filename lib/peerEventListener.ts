@@ -1,5 +1,4 @@
 import { PeerData } from '@/types/channel';
-import localforage from 'localforage';
 import { Events } from 'xgplayer';
 
 export const peerSend = (data: PeerData) => {
@@ -15,6 +14,7 @@ export const xgplayerListener = () => {
   window.xgplayer?.on(Events.PAUSE, () => {
     peerSend({ type: 'vpause', value: Events.PAUSE });
   });
+
   window.xgplayer?.on(Events.USER_ACTION, (data) => {
     console.log(data);
     if (data.action === 'click' || data.action === 'dragend') {
@@ -25,6 +25,12 @@ export const xgplayerListener = () => {
         type: 'playbackRateChange',
         value: data.props[0].playbackRate.to,
       });
+    }
+    if (data.to === true && data.action === 'switch_play_pause') {
+      peerSend({ type: 'vpause', value: Events.PAUSE });
+    }
+    if (data.to === false && data.action === 'switch_play_pause') {
+      peerSend({ type: 'vplay', value: Events.PLAY });
     }
   });
 };
@@ -54,9 +60,10 @@ export const peerDataHandler = (data: PeerData) => {
       window.xgplayer?.pause();
       break;
     case 'vstorage':
+      console.log(data.value);
       // @ts-ignore
       window.setCurrentPlay(data.value);
-      localforage.setItem(data.value.storageId, data.value);
+      // useLocalForage()?.setItem(data.value.storageId, data.value);
       break;
     case 'vtimeupdate':
       window.xgplayer!.currentTime = data.value;

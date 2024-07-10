@@ -1,9 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { PlusCircledIcon } from '@radix-ui/react-icons';
-import QrCode from './qrcode';
-import { useState } from 'react';
-import { baseUrl } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { baseUrl } from '@/lib/utils';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import QrCode from '../qrcode/qrcode';
 
 export default function Share({
   channelId,
@@ -36,11 +36,11 @@ export default function Share({
   return (
     <Dialog open={isCopied} onOpenChange={setIsCopied}>
       <DialogTrigger asChild>
-        <Button size={'icon'} className='text-orange-500 text-xl font-medium'>
-          <PlusCircledIcon className='w-4 h-4' />
+        <Button size={'icon'} className="text-orange-500 text-xl font-medium">
+          <PlusCircledIcon className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className='!max-w-[24rem]'>
+      <DialogContent className="!max-w-[24rem]">
         <DialogHeader>
           <DialogTitle>Share current channel</DialogTitle>
           <DialogDescription>
@@ -48,7 +48,7 @@ export default function Share({
           </DialogDescription>
         </DialogHeader>
         <QrCode channelId={channelId} peerId={peerId} />
-        <DialogFooter className='!flex !justify-center !items-center'>
+        <DialogFooter className="!flex !justify-center !items-center">
           <Button onClick={copy}>Copy channel link</Button>
         </DialogFooter>
       </DialogContent>

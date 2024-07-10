@@ -4,11 +4,15 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'pic.lzzypic.com',
+        hostname: 'pic.wujinpp.com',
       },
       {
         protocol: 'https',
-        hostname: 'pic.wujinpp.com',
+        hostname: 'pic.wlongimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.heimuer.tv',
       },
     ],
   },

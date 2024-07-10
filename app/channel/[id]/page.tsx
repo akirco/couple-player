@@ -1,15 +1,14 @@
 'use client';
-import localforage from 'localforage';
-import { useCallback, useEffect, useState } from 'react';
-import type { StoragedVideo } from '@/types/video';
-import type { CurrentEpisode, PeerData } from '@/types/channel';
-import { Button } from '@/components/ui/button';
-import { ThickArrowRightIcon } from '@radix-ui/react-icons';
+import { useLocalForage } from '@/app/provider';
 import { Room } from '@/components/room';
-import '@/styles/global.css';
+import { Button } from '@/components/ui/button';
 import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
+import '@/styles/global.css';
+import type { CurrentEpisode, PeerData } from '@/types/channel';
+import type { StoragedVideo } from '@/types/video';
 import dynamic from 'next/dynamic';
-import { useSessionStorage, useSearchParam } from 'react-use';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParam, useSessionStorage } from 'react-use';
 
 import {
   Card,
@@ -19,23 +18,32 @@ import {
 } from '@/components/ui/card';
 
 export default function Channel({ params }: { params: { id: string } }) {
+  const localforage = useLocalForage();
+
   const from = useSearchParam('from');
   const userId = Math.random().toString(36).substring(3);
   const [peerId, _setPeerId] = useSessionStorage('peerId', userId);
-  const [connPeerId, setConnPeerId] = useState<string | null>(null);
+  const [connectPeerId, setConnectPeerId] = useState<string | null>(null);
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
   const [currentEpisode, setCurrentEpisode] = useState<CurrentEpisode | null>(
     null
   );
   const channelId = params.id;
 
-  const XGPlayer = dynamic(() => import('@/components/player'), {
+  const XGPlayer = dynamic(() => import('@/components/player/xg'), {
     ssr: false,
   });
 
-  const Share = dynamic(() => import('@/components/share'), {
+  const Share = dynamic(() => import('@/components/sharing'), {
     ssr: false,
   });
+
+  // Inside your Channel component
+  const currentPlayRef = useRef(currentPlay);
+
+  useEffect(() => {
+    currentPlayRef.current = currentPlay;
+  }, [currentPlay]);
 
   const peerListener = useCallback(() => {
     window.peer?.on('connection', (connection) => {
@@ -44,6 +52,14 @@ export default function Channel({ params }: { params: { id: string } }) {
       // 接受连接
       connection.on('open', () => {
         console.log('已接受连接：' + connection.peer);
+        const storage = {
+          type: 'vstorage',
+          value: currentPlayRef.current,
+        };
+        console.log('send video data:', storage);
+
+        connection.send(storage);
+
         // 监听接收到的消息
         connection.on('data', (data) => {
           peerDataHandler(data as PeerData);
@@ -60,18 +76,19 @@ export default function Channel({ params }: { params: { id: string } }) {
     window.peer?.on('error', (err) => {
       console.error('peer error:', err);
     });
-  }, []);
+  }, [currentPlayRef]);
 
   const InitPeer = useCallback(() => {
     if (!typeof window !== undefined) {
       import('peerjs').then(({ default: Peer }) => {
         if (!window.peer) {
+          console.log('初始化peer,我的peerId:', peerId);
           window.peer = new Peer(peerId, {
             debug: 3,
           });
           window.peer.on('open', (id) => {
             if (from) {
-              setConnPeerId(from);
+              setConnectPeerId(from);
             }
             peerListener();
           });
@@ -82,23 +99,26 @@ export default function Channel({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     InitPeer();
-    if (connPeerId !== null) {
-      const connection = window.peer?.connect(connPeerId);
+    if (connectPeerId !== null) {
+      const connection = window.peer?.connect(connectPeerId);
       window.peerConnection = connection;
       connection?.on('open', () => {
         console.log('已连接到Peer to：' + connection.peer);
         connection.on('data', (data) => {
-          peerDataHandler(data as PeerData);
           console.log(
             'request-get data from:',
             connection.peer,
             ' content:',
             data
           );
+          if ((data as PeerData).type === 'vstorage' && from) {
+            localforage?.setItem(channelId, (data as PeerData).value);
+          }
+          peerDataHandler(data as PeerData);
         });
       });
     }
-  }, [InitPeer, connPeerId]);
+  }, [InitPeer, connectPeerId]);
 
   useEffect(() => {
     // @ts-ignore
@@ -107,9 +127,10 @@ export default function Channel({ params }: { params: { id: string } }) {
     window.setCurrentPlay = setCurrentPlay;
     if (channelId) {
       localforage
-        .getItem<StoragedVideo>(channelId)
+        ?.getItem<StoragedVideo>(channelId)
         .then((res) => {
           if (res) {
+            console.log('get data from localforage', res);
             setCurrentPlay(res);
             setCurrentEpisode({
               url: res.playUrls[0],
@@ -124,34 +145,28 @@ export default function Channel({ params }: { params: { id: string } }) {
   }, [channelId]);
 
   return (
-    <div className='flex flex-col xl:p-6 p-0'>
-      <main className='flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16'>
+    <div className="flex flex-col xl:p-6 p-0">
+      <main className="flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16">
         <XGPlayer
           url={currentEpisode?.url}
           title={currentPlay?.vod_name + '-' + currentEpisode?.episode}
         />
-        <Card className='flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none'>
-          <CardContent className='py-5 flex flex-col gap-5 justify-between h-full items-center'>
-            <div className='justify-end px-2 flex w-full text-xl font-medium gap-2'>
-              <h1 className='xl:text-2xl text-xl font-medium px-20 text-center'>
+        <Card className="flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none">
+          <CardContent className="py-5 flex flex-col gap-5 justify-between h-full items-center">
+            <div className="justify-end px-2 flex w-full text-xl font-medium gap-2">
+              <h1 className="xl:text-2xl text-xl font-medium px-20 text-center">
                 ChatRoom
               </h1>
               <Share channelId={channelId} peerId={peerId} />
-              <Button
-                size={'icon'}
-                className={'text-orange-500 text-xl font-medium'}
-              >
-                <ThickArrowRightIcon />
-              </Button>
             </div>
-            <Room />
+            <Room mineId={peerId} connectedId={connectPeerId} />
           </CardContent>
         </Card>
       </main>
-      <Card className='px-2 w-full'>
-        <CardContent className='py-5 flex flex-col gap-5'>
+      <Card className="px-2 w-full">
+        <CardContent className="py-5 flex flex-col gap-5">
           <CardTitle>Collections:</CardTitle>
-          <div className='flex flex-wrap gap-5'>
+          <div className="flex flex-wrap gap-5">
             {currentPlay?.playUrls && currentPlay?.playUrls?.length > 0
               ? currentPlay?.playUrls.map((url, index) => (
                   <Button
@@ -178,7 +193,7 @@ export default function Channel({ params }: { params: { id: string } }) {
                 ))
               : null}
           </div>
-          <hr className='border-none w-full h-[2px] bg-neutral-100' />
+          <hr className="border-none w-full h-[2px] bg-secondary" />
           <CardTitle>{currentPlay?.vod_name}</CardTitle>
           <CardTitle>Type:</CardTitle>
           <CardDescription>
