@@ -43,6 +43,9 @@ export default function Channel({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     currentPlayRef.current = currentPlay;
+    return () => {
+      currentPlayRef.current = undefined;
+    };
   }, [currentPlay]);
 
   const peerListener = useCallback(() => {
