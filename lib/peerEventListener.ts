@@ -1,3 +1,4 @@
+import localforage from '@/lib/localforage';
 import { PeerData } from '@/types/channel';
 import { Events } from 'xgplayer';
 
@@ -68,7 +69,7 @@ export const peerDataHandler = (data: PeerData) => {
         url: data.value.playUrls[0],
         episode: 1,
       });
-      // useLocalForage()?.setItem(data.value.storageId, data.value);
+      localforage?.setItem(data.value.storageId, data.value);
       break;
     case 'vtimeupdate':
       window.xgplayer!.currentTime = data.value;

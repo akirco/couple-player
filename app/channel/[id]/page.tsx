@@ -7,7 +7,7 @@ import '@/styles/global.css';
 import type { CurrentEpisode, PeerData } from '@/types/channel';
 import type { StoragedVideo } from '@/types/video';
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParam, useSessionStorage } from 'react-use';
 
 import {
@@ -29,7 +29,6 @@ export default function Channel({ params }: { params: { id: string } }) {
     null
   );
   const channelId = params.id;
-  const currentPlayRef = useRef(currentPlay);
 
   const XGPlayer = dynamic(() => import('@/components/player/xg'), {
     ssr: false,
@@ -38,26 +37,24 @@ export default function Channel({ params }: { params: { id: string } }) {
     ssr: false,
   });
 
-  useEffect(() => {
-    if (!from) {
-      currentPlayRef.current = currentPlay;
-    }
-  }, [currentPlay, from]);
-
   const peerListener = useCallback(() => {
     window.peer?.on('connection', (connection) => {
-      console.log('收到新连接from：' + connection.peer);
+      console.log('收到新连接from:' + connection.peer);
       window.peerConnection = connection;
       // 接受连接
       connection.on('open', () => {
         console.log('已接受连接：' + connection.peer);
-        const storage = {
-          type: 'vstorage',
-          value: currentPlayRef.current,
-        };
-        console.log('send video data:', storage);
-
-        connection.send(storage);
+        localforage?.getItem<StoragedVideo>(channelId).then((res) => {
+          if (res) {
+            console.log('get data from localforage', res);
+            const storage = {
+              type: 'vstorage',
+              value: res,
+            };
+            console.log('send video data:', storage);
+            connection.send(storage);
+          }
+        });
 
         // 监听接收到的消息
         connection.on('data', (data) => {
@@ -117,29 +114,22 @@ export default function Channel({ params }: { params: { id: string } }) {
         });
       });
     }
-  }, [InitPeer, connectPeerId]);
+  }, [InitPeer, connectPeerId, from]);
 
   useEffect(() => {
-    // @ts-ignore
     window.setCurrentEpisode = setCurrentEpisode;
-    // @ts-ignore
     window.setCurrentPlay = setCurrentPlay;
-    if (channelId) {
-      localforage
-        ?.getItem<StoragedVideo>(channelId)
-        .then((res) => {
-          if (res) {
-            console.log('get data from localforage', res);
-            setCurrentPlay(res);
-            setCurrentEpisode({
-              url: res.playUrls[0],
-              episode: 1,
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (channelId && !from) {
+      localforage?.getItem<StoragedVideo>(channelId).then((res) => {
+        if (res) {
+          console.log('get data from localforage', res);
+          setCurrentPlay(res);
+          setCurrentEpisode({
+            url: res.playUrls[0],
+            episode: 1,
+          });
+        }
+      });
     }
   }, [channelId, localforage]);
 
