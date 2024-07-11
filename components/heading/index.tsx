@@ -1,6 +1,6 @@
 'use client';
 import { baseUrl } from '@/lib/utils';
-import Logo from '@/public/logo/sv_black.png';
+import Logo from '@/public/logo/sv_white.png';
 import {
   GitHubLogoIcon,
   MagnifyingGlassIcon,
@@ -46,10 +46,7 @@ const Heading = () => {
             <Button variant={'ghost'} size={'icon'} onClick={() => {}}>
               <ResetIcon className="w-4 h-4" />
             </Button>
-            <Link
-              href={'https://github.com/akirco/couple-player'}
-              target="_blank"
-            >
+            <Link href={'https://github.com/'} target="_blank">
               <Button variant={'ghost'} size={'icon'}>
                 <GitHubLogoIcon className="w-4 h-4" />
               </Button>

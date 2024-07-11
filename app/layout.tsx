@@ -7,7 +7,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Sync Video',
+  title: 'Sync Player',
   description: 'an elegant chat room build with next.js',
 };
 
