@@ -1,12 +1,19 @@
 'use client';
 import { useLocalForage } from '@/app/provider';
 import History from '@/components/history';
+import { isWebRTCSupported } from '@/lib/utils';
 import type { StoragedVideo } from '@/types/video';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [historyList, setHistoryList] = useState<StoragedVideo[]>();
   const localforage = useLocalForage();
+  const [isRTCSupported, setIsRTCSupported] = useState(false);
+  useEffect(() => {
+    if (isWebRTCSupported()) {
+      setIsRTCSupported(true);
+    }
+  }, [isWebRTCSupported]);
 
   const handleRemoveRecord = (storageId: string) => {
     console.log('storageId:', storageId);
@@ -47,7 +54,11 @@ export default function Home() {
           historyList={historyList}
           handleRemoveRecord={handleRemoveRecord}
         />
-      ) : null}
+      ) : (
+        <span className="text-center text-white/10  pt-14 bottom-8">
+          WebRTCSupported:{isRTCSupported ? 'true' : 'false'}
+        </span>
+      )}
     </div>
   );
 }

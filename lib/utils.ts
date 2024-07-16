@@ -26,3 +26,7 @@ export function deduplicate<T>(arr: Array<T>): Array<T> {
     return acc;
   }, []);
 }
+
+export function isWebRTCSupported() {
+  return !!window.RTCPeerConnection;
+}

@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const apis = [
     'https://api.wujinapi.me/api.php/provide/vod/?ac=detail&wd=',
     'https://collect.wolongzyw.com/api.php/provide/vod/?ac=detail&wd=',
-    // 'https://json.heimuer.xyz/api.php/provide/vod/?ac=detail&wd=',
+    'https://json.heimuer.xyz/api.php/provide/vod/?ac=detail&wd=',
   ];
 
   const { video } = await req.json();
