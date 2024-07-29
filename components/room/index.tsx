@@ -11,18 +11,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 // import { peerSend } from '@/lib/peerEventListener';
 import { peerSend } from '@/lib/peerEventListener';
 import { useState } from 'react';
-
-function AvatarDemo() {
-  return (
-    <Avatar>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-    </Avatar>
-  );
-}
 
 export function Room({
   mineId,
@@ -46,9 +37,7 @@ export function Room({
         <Card className="h-full flex flex-col justify-between">
           <CardHeader>
             <CardTitle>Contacts</CardTitle>
-            <CardDescription>
-              Make changes to your account here. Click save when youre done.
-            </CardDescription>
+            <CardDescription>View your connected user's ID.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <ScrollArea className="h-96">
@@ -72,7 +61,7 @@ export function Room({
           <CardHeader>
             <CardTitle>Message</CardTitle>
             <CardDescription>
-              Change your password here. After saving, youll be logged out.
+              Send a message to your connected user.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -89,7 +78,7 @@ export function Room({
               <Button
                 size={'icon'}
                 onClick={sendMsg}
-                className="text-orange-500 text-xl font-medium"
+                className="text-white text-xl font-medium"
               >
                 <PaperPlaneIcon className="w-4 h-4" />
               </Button>

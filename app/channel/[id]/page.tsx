@@ -173,7 +173,7 @@ export default function Channel({ params }: { params: { id: string } }) {
                     }}
                     className={
                       url === currentEpisode?.url
-                        ? 'text-orange-500 text-xl font-medium'
+                        ? 'text-black text-xl font-medium'
                         : ''
                     }
                   >

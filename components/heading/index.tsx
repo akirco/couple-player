@@ -1,11 +1,8 @@
 'use client';
+import ThemeSwitch from '@/components/theme-switch';
 import { baseUrl } from '@/lib/utils';
 import Logo from '@/public/logo/sv_white.png';
-import {
-  GitHubLogoIcon,
-  MagnifyingGlassIcon,
-  ResetIcon,
-} from '@radix-ui/react-icons';
+import { GitHubLogoIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -43,9 +40,7 @@ const Heading = () => {
             />
           </Link>
           <div className="flex justify-end items-center gap-5 ">
-            <Button variant={'ghost'} size={'icon'} onClick={() => {}}>
-              <ResetIcon className="w-4 h-4" />
-            </Button>
+            <ThemeSwitch />
             <Link href={'https://github.com/'} target="_blank">
               <Button variant={'ghost'} size={'icon'}>
                 <GitHubLogoIcon className="w-4 h-4" />
@@ -87,7 +82,7 @@ const Heading = () => {
               router.push(`/search?query=${encodeURIComponent(vname)}`)
             }
           >
-            <MagnifyingGlassIcon className="w-10 h-10 p-2 hover:bg-secondary/50 rounded-full" />
+            <MagnifyingGlassIcon className="w-10 h-10 p-2 bg-secondary hover:bg-secondary/90 rounded-full" />
           </button>
         </div>
       </div>

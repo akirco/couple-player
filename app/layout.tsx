@@ -17,13 +17,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <LocalForageProvider>
-      <html lang="en" className="dark">
-        <body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <LocalForageProvider>
           <Heading />
           {children}
-        </body>
-      </html>
-    </LocalForageProvider>
+        </LocalForageProvider>
+      </body>
+    </html>
   );
 }

@@ -55,8 +55,10 @@ export default function Home() {
           handleRemoveRecord={handleRemoveRecord}
         />
       ) : (
-        <span className="text-center text-white/10  pt-14 bottom-8">
+        <span className="text-center dark:text-white/20 text-black/20  pt-14 bottom-8">
           WebRTCSupported:{isRTCSupported ? 'true' : 'false'}
+          <br />
+          If you want to syncing video, your browser must be support WebRTC.
         </span>
       )}
     </div>

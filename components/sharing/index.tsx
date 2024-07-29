@@ -36,7 +36,7 @@ export default function Share({
   return (
     <Dialog open={isCopied} onOpenChange={setIsCopied}>
       <DialogTrigger asChild>
-        <Button size={'icon'} className="text-orange-500 text-xl font-medium">
+        <Button size={'icon'} className="text-white text-xl font-medium">
           <PlusCircledIcon className="w-4 h-4" />
         </Button>
       </DialogTrigger>
