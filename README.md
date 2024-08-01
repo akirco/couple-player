@@ -1,4 +1,4 @@
-# 存在跨浏览器接受不到数据问题，待fix
+# 存在跨浏览器接受不到数据问题，待fix。［已解决］
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
@@ -19,14 +19,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
   - chat
     - emoji
     - danmu optmize
+  - rewrite video player
       
 ## Tips
 
-**暂时没开发完整，别 clone 玩了，昨天用的 api dou 被封了**
 
-**本来是想写聊天同步播放视频的房间的，但是使用的是peerjs,客户端是可以实现的但是比较复杂，我觉得应该交给后端实现**
-
-**next.js prod 不支持websocket**
+**next.js prod（vercel） 不支持websocket**
 
 ## Development
 
