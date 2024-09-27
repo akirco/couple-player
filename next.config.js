@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'assets.heimuer.tv',
       },
+      {
+        protocol: 'https',
+        hostname: 'pic.youkupic.com',
+      }
     ],
   },
 };
