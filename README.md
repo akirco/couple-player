@@ -1,42 +1,62 @@
-# 存在跨浏览器接受不到数据问题，待fix。［已解决］
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
 
 ## Intro
-> A sync-video player with you buddy , basd on `webrtc`([peer.js](https://peerjs.com))!
+> A sync-video player with you buddy , basd on `webrtc`([peer.js](https://peerjs.com))!考虑重写中，太糙了
 
-<video src="./preview.mp4" controls></video>
+
+
 
 ## features
 
-- completed
-  - ...
+- 双人同步视频播放器,支持通过弹幕聊天
+- 完全基于webrtc,无服务器 【已实现】
+- 支持通过弹幕聊天 【已实现】
+- 支持视频源切换
+- 支持自定义播放器
+- 通过webrtc实现流传输
 
-- plan
-  - add video source   
-    - youtube
-    - bilibili
-  - chat
-    - emoji
-    - danmu optmize
-  - rewrite video player
-      
+
+[![Next.js](https://img.shields.io/badge/Next.js-14.2.24-000000?logo=next.js)](https://nextjs.org/)
+[![WebRTC](https://img.shields.io/badge/WebRTC-Peer.js-blue)](https://peerjs.com)
+
+> 基于WebRTC的实时同步视频播放器，支持与好友同步观看视频
+
+<video src="./preview.mp4" controls></video>
+
+## ✨ 功能特性
+
+### 已实现功能
+- 基于Peer.js的P2P连接
+- 视频状态同步（播放/暂停/跳转）
+- 基础弹幕功能
+
+### 开发计划
+| 类别       | 功能                | 进度   |
+|------------|---------------------|--------|
+| 视频源支持 | YouTube            | ⌛ 规划 |
+|            | Bilibili           | ⌛ 规划 |
+| 聊天功能   | 表情支持           | ⌛ 规划 |
+|            | 弹幕优化           | ⌛ 规划 |
+| 播放器     | 自定义播放器       | ⌛ 规划 |
+
+## 🚀 快速开始
+
+### 开发环境
+```bash
+git clone https://github.com/akirco/couple-player.git
+pnpm install
+pnpm dev
+
+```
+
 ## Tips
 
 
 **next.js prod（vercel） 不支持websocket**
 
-## Development
 
-```bash
-git clone https://github.com/akirco/couple-player.git
 
-pnpm i
-
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
 ## Learn More
@@ -54,4 +74,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-![](https://images6.alphacoders.com/132/1327989.png)
+<!-- ![](https://images6.alphacoders.com/132/1327989.png) -->
