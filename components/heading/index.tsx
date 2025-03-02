@@ -41,7 +41,7 @@ const Heading = () => {
           </Link>
           <div className="flex justify-end items-center gap-5 ">
             <ThemeSwitch />
-            <Link href={"https://github.com/"} target="_blank">
+            <Link href={"https://github.com/akirco"} target="_blank">
               <Button variant={"ghost"} size={"icon"}>
                 <GitHubLogoIcon className="w-4 h-4" />
               </Button>
@@ -70,9 +70,9 @@ const Heading = () => {
             value={vname}
             onChange={(e) => setVname(e.target.value)}
             onKeyDown={(e) => {
-              e.key === "Enter" && vname.length > 0
-                ? router.push(`/search?query=${encodeURIComponent(vname)}`)
-                : void 0;
+              if (e.key === "Enter" && vname.length > 0) {
+                router.push(`/search?query=${encodeURIComponent(vname)}`);
+              }
             }}
           />
           <button

@@ -1,7 +1,7 @@
-'use client';
-import localforage from '@/lib/localforage';
-import { ThemeProvider } from 'next-themes';
-import { createContext, useContext } from 'react';
+"use client";
+import localforage from "@/lib/localforage";
+import { ThemeProvider } from "next-themes";
+import { createContext, useContext } from "react";
 
 const LocalForageContext = createContext<LocalForage | null>(null);
 
@@ -14,8 +14,8 @@ export const LocalForageProvider = ({
     <ThemeProvider
       attribute="class"
       value={{
-        light: 'light',
-        dark: 'dark',
+        light: "light",
+        dark: "dark",
       }}
     >
       <LocalForageContext.Provider value={localforage}>

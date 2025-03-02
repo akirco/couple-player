@@ -1,28 +1,28 @@
-'use client';
-import { useLocalForage } from '@/app/provider';
-import { Room } from '@/components/room';
-import { Button } from '@/components/ui/button';
-import { peerDataHandler, peerSend } from '@/lib/peerEventListener';
-import '@/styles/global.css';
-import type { CurrentEpisode, PeerData } from '@/types/channel';
-import type { StoragedVideo } from '@/types/video';
-import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useState } from 'react';
-import { useSearchParam, useSessionStorage } from 'react-use';
+"use client";
+import { useLocalForage } from "@/app/provider";
+import { Room } from "@/components/room";
+import { Button } from "@/components/ui/button";
+import { peerDataHandler, peerSend } from "@/lib/peerEventListener";
+import "@/styles/global.css";
+import type { CurrentEpisode, PeerData } from "@/types/channel";
+import type { StoragedVideo } from "@/types/video";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParam, useSessionStorage } from "react-use";
 
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 export default function Channel({ params }: { params: { id: string } }) {
   const localforage = useLocalForage();
 
-  const from = useSearchParam('from');
+  const from = useSearchParam("from");
   const userId = Math.random().toString(36).substring(3);
-  const [peerId, _setPeerId] = useSessionStorage('peerId', userId);
+  const [peerId, _setPeerId] = useSessionStorage("peerId", userId);
   const [connectPeerId, setConnectPeerId] = useState<string | null>(null);
   const [currentPlay, setCurrentPlay] = useState<StoragedVideo>();
   const [currentEpisode, setCurrentEpisode] = useState<CurrentEpisode | null>(
@@ -30,59 +30,59 @@ export default function Channel({ params }: { params: { id: string } }) {
   );
   const channelId = params.id;
 
-  const XGPlayer = dynamic(() => import('@/components/player/xg'), {
+  const XGPlayer = dynamic(() => import("@/components/player/xg"), {
     ssr: false,
   });
-  const Share = dynamic(() => import('@/components/sharing'), {
+  const Share = dynamic(() => import("@/components/sharing"), {
     ssr: false,
   });
 
   const peerListener = useCallback(() => {
-    window.peer?.on('connection', (connection) => {
-      console.log('收到新连接from:' + connection.peer);
+    window.peer?.on("connection", (connection) => {
+      console.log("收到新连接from:" + connection.peer);
       window.peerConnection = connection;
       // 接受连接
-      connection.on('open', () => {
-        console.log('已接受连接：' + connection.peer);
+      connection.on("open", () => {
+        console.log("已接受连接：" + connection.peer);
         localforage?.getItem<StoragedVideo>(channelId).then((res) => {
           if (res) {
-            console.log('get data from localforage', res);
+            console.log("get data from localforage", res);
             const storage = {
-              type: 'vstorage',
+              type: "vstorage",
               value: res,
             };
-            console.log('send video data:', storage);
+            console.log("send video data:", storage);
             connection.send(storage);
           }
         });
 
         // 监听接收到的消息
-        connection.on('data', (data) => {
+        connection.on("data", (data) => {
           peerDataHandler(data as PeerData);
 
           console.log(
-            'response-get data from:',
+            "response-get data from:",
             connection.peer,
-            ' content:',
+            " content:",
             data
           );
         });
       });
     });
-    window.peer?.on('error', (err) => {
-      console.error('peer error:', err);
+    window.peer?.on("error", (err) => {
+      console.error("peer error:", err);
     });
-  }, []);
+  }, [channelId, localforage]);
 
   const InitPeer = useCallback(() => {
     if (!typeof window !== undefined) {
-      import('peerjs').then(({ default: Peer }) => {
+      import("peerjs").then(({ default: Peer }) => {
         if (!window.peer) {
-          console.log('初始化peer,我的peerId:', peerId);
+          console.log("初始化peer,我的peerId:", peerId);
           window.peer = new Peer(peerId, {
             debug: 3,
           });
-          window.peer.on('open', (id) => {
+          window.peer.on("open", (id) => {
             if (from) {
               setConnectPeerId(from);
             }
@@ -98,23 +98,23 @@ export default function Channel({ params }: { params: { id: string } }) {
     if (connectPeerId !== null) {
       const connection = window.peer?.connect(connectPeerId);
       window.peerConnection = connection;
-      connection?.on('open', () => {
-        console.log('已连接到Peer to：' + connection.peer);
-        connection.on('data', (data) => {
+      connection?.on("open", () => {
+        console.log("已连接到Peer to：" + connection.peer);
+        connection.on("data", (data) => {
           console.log(
-            'request-get data from:',
+            "request-get data from:",
             connection.peer,
-            ' content:',
+            " content:",
             data
           );
-          if ((data as PeerData).type === 'vstorage' && from) {
+          if ((data as PeerData).type === "vstorage" && from) {
             localforage?.setItem(channelId, (data as PeerData).value);
           }
           peerDataHandler(data as PeerData);
         });
       });
     }
-  }, [InitPeer, connectPeerId, from]);
+  }, [InitPeer, channelId, connectPeerId, from, localforage]);
 
   useEffect(() => {
     window.setCurrentEpisode = setCurrentEpisode;
@@ -122,7 +122,7 @@ export default function Channel({ params }: { params: { id: string } }) {
     if (channelId && !from) {
       localforage?.getItem<StoragedVideo>(channelId).then((res) => {
         if (res) {
-          console.log('get data from localforage', res);
+          console.log("get data from localforage", res);
           setCurrentPlay(res);
           setCurrentEpisode({
             url: res.playUrls[0],
@@ -131,14 +131,14 @@ export default function Channel({ params }: { params: { id: string } }) {
         }
       });
     }
-  }, [channelId, localforage]);
+  }, [channelId, from, localforage]);
 
   return (
     <div className="flex flex-col xl:p-6 p-0">
       <main className="flex xl:gap-5 gap-0 w-full h-full xl:flex-row flex-col pb-16">
         <XGPlayer
           url={currentEpisode?.url}
-          title={currentPlay?.vod_name + '-' + currentEpisode?.episode}
+          title={currentPlay?.vod_name + "-" + currentEpisode?.episode}
         />
         <Card className="flex flex-col xl:rounded-xl rounded-tl-none rounded-tr-none">
           <CardContent className="py-5 flex flex-col gap-5 justify-between h-full items-center">
@@ -160,21 +160,21 @@ export default function Channel({ params }: { params: { id: string } }) {
               ? currentPlay?.playUrls.map((url, index) => (
                   <Button
                     key={index}
-                    size={'icon'}
+                    size={"icon"}
                     onClick={() => {
                       setCurrentEpisode({
                         url,
                         episode: index + 1,
                       });
                       peerSend({
-                        type: 'episodeChange',
+                        type: "episodeChange",
                         value: { url, exisode: index + 1 },
                       });
                     }}
                     className={
                       url === currentEpisode?.url
-                        ? 'text-black text-xl font-medium'
-                        : ''
+                        ? "text-black text-xl font-medium"
+                        : ""
                     }
                   >
                     {index + 1}

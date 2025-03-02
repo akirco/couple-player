@@ -1,19 +1,19 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
 // import { peerSend } from '@/lib/peerEventListener';
-import { peerSend } from '@/lib/peerEventListener';
-import { useState } from 'react';
+import { peerSend } from "@/lib/peerEventListener";
+import { useState } from "react";
 
 export function Room({
   mineId,
@@ -22,10 +22,10 @@ export function Room({
   mineId: string | null;
   connectedId: string | null;
 }) {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const sendMsg = () => {
-    peerSend({ type: 'message', value: message });
-    setMessage('');
+    peerSend({ type: "message", value: message });
+    setMessage("");
   };
   return (
     <Tabs defaultValue="Messages" className="w-full h-full flex flex-col">
@@ -37,7 +37,9 @@ export function Room({
         <Card className="h-full flex flex-col justify-between">
           <CardHeader>
             <CardTitle>Contacts</CardTitle>
-            <CardDescription>View your connected user's ID.</CardDescription>
+            <CardDescription>
+              View your connected user&apos;s ID.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <ScrollArea className="h-96">
@@ -71,12 +73,12 @@ export function Room({
                 type="text"
                 value={message}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && message.length > 0) sendMsg();
+                  if (e.key === "Enter" && message.length > 0) sendMsg();
                 }}
                 onChange={(e) => setMessage(e.target.value)}
               />
               <Button
-                size={'icon'}
+                size={"icon"}
                 onClick={sendMsg}
                 className="text-white text-xl font-medium"
               >

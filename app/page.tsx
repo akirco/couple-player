@@ -1,9 +1,9 @@
-'use client';
-import { useLocalForage } from '@/app/provider';
-import History from '@/components/history';
-import { isWebRTCSupported } from '@/lib/utils';
-import type { StoragedVideo } from '@/types/video';
-import { useEffect, useState } from 'react';
+"use client";
+import { useLocalForage } from "@/app/provider";
+import History from "@/components/history";
+import { isWebRTCSupported } from "@/lib/utils";
+import type { StoragedVideo } from "@/types/video";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [historyList, setHistoryList] = useState<StoragedVideo[]>();
@@ -13,10 +13,10 @@ export default function Home() {
     if (isWebRTCSupported()) {
       setIsRTCSupported(true);
     }
-  }, [isWebRTCSupported]);
+  }, []);
 
   const handleRemoveRecord = (storageId: string) => {
-    console.log('storageId:', storageId);
+    console.log("storageId:", storageId);
     setHistoryList((prevVideos) =>
       prevVideos?.filter((video) => video.storageId !== storageId)
     );
@@ -37,7 +37,7 @@ export default function Home() {
             }
           });
         });
-        console.log('Iteration has completed');
+        console.log("Iteration has completed");
       } catch (err) {
         console.error(err);
       }
@@ -56,7 +56,7 @@ export default function Home() {
         />
       ) : (
         <span className="text-center dark:text-white/20 text-black/20  pt-14 bottom-8">
-          WebRTCSupported:{isRTCSupported ? 'true' : 'false'}
+          WebRTCSupported:{isRTCSupported ? "true" : "false"}
           <br />
           If you want to syncing video, your browser must be support WebRTC.
         </span>

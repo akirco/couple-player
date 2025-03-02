@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-const flatten = (array: any[]) => {
-  let result: any[] = [];
+const flatten = (array: unknown[]) => {
+  let result: unknown[] = [];
   array.forEach((item) => {
     if (Array.isArray(item)) {
       result = result.concat(flatten(item));
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     // 'https://collect.wolongzyw.com/api.php/provide/vod/?ac=detail&wd=',
     // 'https://json.heimuer.xyz/api.php/provide/vod/?ac=detail&wd=',
     "https://wolongzy.cc/api.php/provide/vod/?ac=detail&wd=",
-    "https://heimuer.tv/api.php/provide/vod/?ac=detail&wd="
+    "https://heimuer.tv/api.php/provide/vod/?ac=detail&wd=",
   ];
 
   const { video } = await req.json();
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       list: flatten(results),
     });
-  } catch (error) {
-    return NextResponse.json({ error: 'Video not found' });
+  } catch {
+    return NextResponse.json({ error: "Video not found" });
   }
 }

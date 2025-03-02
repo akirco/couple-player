@@ -1,27 +1,27 @@
-'use client';
-import Loading from '@/components/loading';
-import { Video } from '@/components/video';
-import { VideoList } from '@/types/video';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+"use client";
+import Loading from "@/components/loading";
+import { Video } from "@/components/video";
+import { VideoList } from "@/types/video";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
 
 function SearchResults() {
-  const searchParams = useSearchParams().get('query');
+  const searchParams = useSearchParams().get("query");
   const [videoList, setVideoList] = useState<VideoList[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchVideos = useCallback(() => {
     setIsLoading(true);
     if (searchParams) {
-      fetch('/api/video', {
-        method: 'POST',
+      fetch("/api/video", {
+        method: "POST",
         body: JSON.stringify({
           video: searchParams,
         }),
       }).then((response) => {
         response.json().then((res) => {
-          console.log('res.list:', res);
+          console.log("res.list:", res);
           setIsLoading(false);
           setVideoList(res.list);
         });
@@ -31,7 +31,7 @@ function SearchResults() {
 
   useEffect(() => {
     fetchVideos();
-  }, [searchParams]);
+  }, [fetchVideos, searchParams]);
 
   return isLoading ? (
     <Loading />
