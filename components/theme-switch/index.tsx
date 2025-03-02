@@ -1,14 +1,19 @@
 'use client';
 import '@/styles/darkswitch.css';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ThemeSwitch = () => {
-  const { setTheme, theme } = useTheme();
-  const [darkMode, setDarkMode] = useState(theme === 'dark');
+  const { setTheme, theme, systemTheme } = useTheme();
+  const [darkMode, setDarkMode] = useState(false);
+  useEffect(() => {
+    const currentTheme = theme === 'system' ? systemTheme : theme;
+    setDarkMode(currentTheme === 'dark');
+  }, [theme, systemTheme]);
 
   const toggleDarkMode = () => {
-    setTheme(darkMode ? 'light' : 'dark');
+    const newTheme = darkMode ? 'light' : 'dark';
+    setTheme(newTheme);
     setDarkMode(!darkMode);
   };
 
