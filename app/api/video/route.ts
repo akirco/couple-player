@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { NextResponse } from 'next/server';
 
 const flatten = (array: any[]) => {
@@ -30,7 +29,6 @@ export async function POST(req: Request) {
     const requestPromises = apis.map(async (api) => {
       const res = await fetch(`${api}${video}`);
       const data = await res.json();
-      fs.writeFileSync('./data.json', JSON.stringify(data));
       return data.list;
     });
     const results = await Promise.all(requestPromises);
